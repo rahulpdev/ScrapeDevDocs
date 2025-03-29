@@ -45,8 +45,13 @@ To regularly crawl online developer documentation and maintain an up-to-date, st
         - Preserve all external links as markdown references.
         - Retrieve all images from image URLs. For each image:
           - If image is SVG format:
-            - Assess if it contains flowchart elements
-            - If flowchart is detected: convert to mermaid diagram
+            - Assess if it contains flowchart/architecture diagram elements (nodes, connectors, labels)
+            - If flowchart/architecture diagram is detected:
+              - Convert to mermaid diagram preserving:
+                - Node relationships and hierarchy
+                - Connector directions and types
+                - Label positioning and content
+              - Handle common architecture elements (buses, services, components)
             - If no flowchart detected: preserve original SVG with URL, reference and alt text
           - For all other image formats (PNG, JPG, etc):
             - Preserve original image with URL, reference and alt text
