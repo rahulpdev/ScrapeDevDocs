@@ -3,7 +3,7 @@
 To regularly crawl online developer documentation and maintain an up-to-date, structured set of offline markdown files containing the documentation. The project must achieve this goal with two independent functions:
 
 - **Function 1 Goal:** Generate a markdown file with a tree structure diagram of the contents of a website's navigation menu.
-- **Function 2 Goal:** Crawl a list of URLs and extract the page content from each URL into a single markdown file. Input must be a URL pointing to a markdown file (e.g. https://example.com/scrape_website_menumap.md).
+- **Function 2 Goal:** Crawl a list of URLs and extract the page content from each URL into exactly one markdown file per URL. Each output file must contain both the page content and any converted mermaid diagrams (where applicable). Input must be a URL pointing to a markdown file (e.g. https://example.com/scrape_website_menumap.md).
 
 **Project Scope:**
 
@@ -45,22 +45,24 @@ To regularly crawl online developer documentation and maintain an up-to-date, st
         - Preserve all external links as markdown references.
         - Retrieve all images from image URLs. For each image:
           - If image is SVG format:
-            - Assess if it contains flowchart/architecture diagram elements (nodes, connectors, labels)
-            - If flowchart/architecture diagram is detected:
-              - Convert to mermaid diagram preserving:
-                - Node relationships and hierarchy
-                - Connector directions and types
-                - Label positioning and content
-              - Handle common architecture elements (buses, services, components)
-            - If no flowchart detected: preserve original SVG with URL, reference and alt text
+            - Convert to mermaid diagram preserving:
+              - Node relationships and hierarchy
+              - Connector directions and types
+              - Label positioning and content
+            - On conversion failure: preserve original content with error notice
+            - Discard original SVG after successful conversion
           - For all other image formats (PNG, JPG, etc):
             - Preserve original image with URL, reference and alt text
         - Preserve "Last Updated" data verbatim.
         - Add the page full path URL to the end of the file.
         - Check off the URL in `<website name>_scrape_checklist.md` after file completion, and add a timestamp.
-      - For each URL, maintain a:
-        - Single `<website name>_docs` folder (no sub folders) in the project root folder.
-        - `<website name>_scrape_checklist.md` task tracker file in the project root folder.
+      - For each URL, maintain:
+        - Single `<website name>_docs` folder (no sub folders) in project root
+        - `<website name>_scrape_checklist.md` task tracker in project root
+        - Processed markdown files containing:
+          - Original content structure
+          - Converted mermaid diagrams (where applicable)
+          - Source URL reference
       - Store each markdown file output in its `<website name>_docs` folder.
       - Accept as a terminal input (with input validation) a URL to a GitHub repository raw file that contains a tree structure markdown diagram, where each branch of the tree is a URL to be crawled.
       - After accepting a valid terminal input, overwrite the content of `<website name>_scrape_checklist.md` with a checklist of the URLs from the tree structure diagram and a file Last Updated timestamp.

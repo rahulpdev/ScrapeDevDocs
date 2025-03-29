@@ -8,6 +8,10 @@
      - Robust HTML parsing
      - Handles malformed markup
      - XPath-like navigation
+   - cheerio (v1.0.7)
+     - Fast HTML parsing and manipulation
+     - jQuery-like syntax
+     - Server-side DOM implementation
    - lxml (v4.9.3)
      - Faster parsing backend for BeautifulSoup
      - XPath support for complex queries
@@ -47,6 +51,10 @@
    - Mermaid.js CLI (v10.6.1)
      - SVG to markdown conversion
      - Diagram generation
+   - svg2mermaid (v2.4.1)
+     - Specialized SVG to Mermaid conversion
+     - Architecture diagram detection
+     - Node/edge extraction
    - Pandoc (v3.1.6)
      - Fallback content conversion
      - Format normalization
