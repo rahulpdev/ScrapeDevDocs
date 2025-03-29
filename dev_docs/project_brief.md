@@ -45,13 +45,16 @@ To regularly crawl online developer documentation and maintain an up-to-date, st
         - Preserve all external links as markdown references.
         - Retrieve all images from image URLs. For each image:
           - If image is SVG format:
-            - Convert to mermaid diagram preserving:
+            - Attempt conversion to mermaid diagram preserving:
               - Node relationships and hierarchy
               - Connector directions and types
               - Label positioning and content
-            - On conversion failure: preserve original content with error notice
-            - Discard original SVG after successful conversion
+            - On any conversion failure or invalid SVG:
+              - Preserve original image reference with URL and alt text
+              - Do not include error notices
+              - Do not retain failed conversion attempts
           - For all other image formats (PNG, JPG, etc):
+          - Do not retain image files
             - Preserve original image with URL, reference and alt text
         - Preserve "Last Updated" data verbatim.
         - Add the page full path URL to the end of the file.

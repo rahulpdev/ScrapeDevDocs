@@ -25,7 +25,13 @@
    - Generates markdown files preserving structure
    - Maintains `*_scrape_checklist.md` trackers
 
-4. **Automation**
+4. **Image Processing**
+
+   - SVG conversion to mermaid diagrams
+   - Simple fallback to original content on any failure
+   - Original content preservation for non-SVG images
+
+5. **Automation**
    - GitHub Actions workflow at `.github/workflows/daily-scrape.yml`
    - Scheduled daily execution
 
