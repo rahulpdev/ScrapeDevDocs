@@ -31,7 +31,18 @@
        - Non-blocking error handling
        - Navigation selector column presence check
 
-3. **Content Conversion**
+3. **URL Validation**
+
+   - Python's urlparse with custom extensions
+   - Explicit handling for 30+ common TLDs (fixed list)
+   - Special cases for CMS paths (WordPress, Drupal)
+   - Maximum redirect depth: 5
+   - Explicitly excludes:
+     - Cyclic redirect detection
+     - TLD list updates
+     - Internationalized domain name handling
+
+4. **Content Conversion**
    - Mermaid.js CLI (v10.6.1)
      - SVG to markdown conversion
      - Diagram generation

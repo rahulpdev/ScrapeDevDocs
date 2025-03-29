@@ -9,6 +9,7 @@
 - [x] Updated codebase_summary.md with CSV input (v1.3)
 - [x] Updated tech_stack.md with CSV validation (v1.4)
 - [x] Enhanced codebase_summary.md with validation details (v1.4)
+- [x] Added URL validation constraints to tech_stack.md (v1.6)
 
 ### Architecture
 
@@ -54,6 +55,6 @@
 | ------------------- | ------- | ------------ |
 | project_brief.md    | v1.0    | 2025-03-28   |
 | codebase_summary.md | v1.4    | 2025-03-29   |
-| tech_stack.md       | v1.5    | 2025-03-29   |
+| tech_stack.md       | v1.6    | 2025-03-29   |
 | project_tracker.md  | v1.6    | 2025-03-29   |
 | current_task.md     | v1.2    | 2025-03-28   |
