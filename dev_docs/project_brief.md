@@ -44,8 +44,12 @@ To regularly crawl online developer documentation and maintain an up-to-date, st
         - Replace all relative path URLs with full path URLs.
         - Preserve all external links as markdown references.
         - Retrieve all images from image URLs. For each image:
-          - Convert the image to a mermaid diagram.
-          - Replace the image reference and URL content with the mermaid diagram.
+          - If image is SVG format:
+            - Assess if it contains flowchart elements
+            - If flowchart is detected: convert to mermaid diagram
+            - If no flowchart detected: preserve original SVG with URL, reference and alt text
+          - For all other image formats (PNG, JPG, etc):
+            - Preserve original image with URL, reference and alt text
         - Preserve "Last Updated" data verbatim.
         - Add the page full path URL to the end of the file.
         - Check off the URL in `<website name>_scrape_checklist.md` after file completion, and add a timestamp.

@@ -19,21 +19,33 @@
 
 ### Function 1 (Navigation Crawler)
 
-- [ ] URL processing implementation
+- [x] URL processing implementation
 - [ ] Menu tree generation
 - [ ] Diagram output formatting
 
 ### Function 2 (Content Extractor)
 
-- [ ] Content scraping logic
-- [ ] Markdown conversion
-- [ ] Checklist generation
+- [ ] Content extraction rules:
+  - [ ] Preserve heading hierarchy
+  - [ ] Process images:
+    - [ ] For flowchart diagrams: convert to mermaid
+    - [ ] For other images: include URL, reference and alt text
+  - [ ] Replace relative URLs with absolute
+  - [ ] Maintain external links
+  - [ ] Include last updated timestamp
+  - [ ] Add page URL at file end
+- [ ] Output structure:
+  - [ ] Single folder per site
+  - [ ] Checklist file per site
 
 ### Infrastructure
 
 - [x] GitHub Actions workflow setup
-- [ ] Error handling implementation
-- [ ] Logging configuration
+- [x] Error handling implementation
+- [x] Logging configuration (Python logging module)
+  - [x] JSON format
+  - [x] Log rotation
+  - [ ] Error severity levels
 
 ## Documentation Versions
 
@@ -42,5 +54,5 @@
 | project_brief.md    | v1.0    | 2025-03-28   |
 | codebase_summary.md | v1.3    | 2025-03-28   |
 | tech_stack.md       | v1.4    | 2025-03-28   |
-| project_tracker.md  | v1.4    | 2025-03-28   |
+| project_tracker.md  | v1.5    | 2025-03-29   |
 | current_task.md     | v1.2    | 2025-03-28   |

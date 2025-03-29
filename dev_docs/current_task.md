@@ -28,9 +28,10 @@
 ### Infrastructure Setup
 
 - Logging:
-  - Configure winston logger
+  - Configure Python logging module
   - Set up log rotation
   - Error severity levels
+  - JSON format for structured logging
 - Error handling:
   - Implement circuit breaker pattern
   - Configure Sentry.io alerts
@@ -38,6 +39,13 @@
 
 ### Content Extractor Preparation
 
-- Define content selection rules
-- Create test cases
-- Set up output directory structure
+- Content extraction rules:
+  - Preserve heading hierarchy
+  - Convert images to mermaid diagrams
+  - Replace relative URLs with absolute
+  - Maintain external links
+  - Include last updated timestamp
+  - Add page URL at file end
+- Output structure:
+  - Single folder per site (no subfolders)
+  - Checklist file per site
