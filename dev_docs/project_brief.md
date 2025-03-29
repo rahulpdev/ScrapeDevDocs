@@ -11,6 +11,7 @@ To regularly crawl online developer documentation and maintain an up-to-date, st
 
     - Develop a script to:
       - Extract navigation menus using user-provided CSS selectors
+      - Comprehensively traverse the navigation menu and all its sub-menus
       - Represent each menu item in a tree structure, using its full path URL.
       - Read website URLs and navigation selectors from a CSV file:
         - First column contains website URLs
@@ -36,7 +37,7 @@ To regularly crawl online developer documentation and maintain an up-to-date, st
 2.  **Function 2: URL Content Extraction and Markdown Conversion**
 
     - Develop a script to:
-      - Crawl a list of URLs and produce a markdown file for each website page.
+      - Crawl a list of URLs and output a markdown file for each website page.
       - For each retrieved page:
         - Preserve the heading hierarchy of the original content.
         - Do NOT remove any content between section headers.
@@ -44,13 +45,16 @@ To regularly crawl online developer documentation and maintain an up-to-date, st
         - Preserve all external links as markdown references.
         - Retrieve all images from image URLs. For each image:
           - Convert the image to a mermaid diagram.
-          - Replace the image reference and URL on page with the mermaid diagram.
+          - Replace the image reference and URL content with the mermaid diagram.
         - Preserve "Last Updated" data verbatim.
         - Add the page full path URL to the end of the file.
         - Check off the URL in `<website name>_scrape_checklist.md` after file completion, and add a timestamp.
-    - Store each markdown file in a single folder (no subfolders) within the project's root directory.
-    - Accept as a terminal input (with validation) a URL to a GitHub repository raw file that contains a tree structure diagram, where each branch of the tree lists a URL to be crawled.
-    - After accepting a valid terminal input create (or overwrite) a `<website name>_scrape_checklist.md` task tracker file in the project root folder containing a checklist of all URLs found in the input tree structure.
+      - For each URL, maintain a:
+        - Single `<website name>_docs` folder (no sub folders) in the project root folder.
+        - `<website name>_scrape_checklist.md` task tracker file in the project root folder.
+      - Store each markdown file output in its `<website name>_docs` folder.
+      - Accept as a terminal input (with input validation) a URL to a GitHub repository raw file that contains a tree structure markdown diagram, where each branch of the tree is a URL to be crawled.
+      - After accepting a valid terminal input, overwrite the content of `<website name>_scrape_checklist.md` with a checklist of the URLs from the tree structure diagram and a file Last Updated timestamp.
 
 3.  **Architectural Assumptions**
 
