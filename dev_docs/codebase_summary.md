@@ -7,6 +7,10 @@
    - Reads URLs from `urls.txt` (root level)
    - Accepts CSV input with URL columns
    - Validates and normalizes URLs
+     - Strict URL format validation
+     - Automatic whitespace trimming
+     - Line number tracking for errors
+     - Non-blocking validation (continues processing valid rows)
    - Handles input/output for both functions
 
 2. **Navigation Crawler (Function 1)**
@@ -29,11 +33,13 @@
 
 ```mermaid
 flowchart LR
-    A[urls.txt] --> B[Navigation Crawler]
-    B --> C[*_menumap.md]
-    A --> D[Content Extractor]
-    D --> E[Site Folders]
-    D --> F[*_scrape_checklist.md]
+    A[urls.txt/CSV] --> B[Validation]
+    B -->|Valid| C[Navigation Crawler]
+    B -->|Errors| D[Error Log]
+    C --> E[*_menumap.md]
+    A --> F[Content Extractor]
+    F --> G[Site Folders]
+    F --> H[*_scrape_checklist.md]
 ```
 
 ## External Dependencies
@@ -43,6 +49,7 @@ flowchart LR
   - BeautifulSoup4: HTML parsing
   - Requests: HTTP requests
   - Mermaid.js CLI: Diagram conversion
+  - Python csv module: CSV processing with validation
 
 - **Infrastructure**
   - GitHub Actions: Scheduled execution
@@ -52,5 +59,7 @@ flowchart LR
 
 - Implemented new file structure per project_brief.md
 - Added proper error handling for all components
+  - Enhanced CSV validation with line tracking
+  - Non-blocking error processing
 - Documented automation workflow
 - Created standardized documentation templates

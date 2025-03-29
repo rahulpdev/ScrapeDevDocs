@@ -25,6 +25,11 @@
      - CSV file parsing
      - Header row handling
      - Type conversion
+     - New validation features:
+       - URL validation with whitespace trimming
+       - Line number tracking for errors
+       - Non-blocking error handling
+       - Navigation selector column presence check
 
 3. **Content Conversion**
    - Mermaid.js CLI (v10.6.1)
@@ -56,6 +61,10 @@
   - Structured logging (JSON)
   - Sentry.io integration
   - Circuit breaker pattern
+  - New CSV-specific error handling:
+    - Per-row error tracking
+    - Validation continues despite errors
+    - Detailed error messages with line numbers
 
 ## Development Tooling
 
