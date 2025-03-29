@@ -27,7 +27,11 @@
 
 ### Function 2 (Content Extractor)
 
-- [ ] Content extraction rules:
+- Input Requirements:
+
+  - [ ] Must be a URL pointing to a markdown file (e.g. https://example.com/scrape_website_menumap.md)
+
+- Content extraction rules:
   - [ ] Preserve heading hierarchy
   - [ ] Process images:
     - [ ] For flowchart diagrams: convert to mermaid
@@ -56,5 +60,5 @@
 | project_brief.md    | v1.0    | 2025-03-28   |
 | codebase_summary.md | v1.4    | 2025-03-29   |
 | tech_stack.md       | v1.6    | 2025-03-29   |
-| project_tracker.md  | v1.6    | 2025-03-29   |
+| project_tracker.md  | v1.7    | 2025-03-29   |
 | current_task.md     | v1.2    | 2025-03-28   |

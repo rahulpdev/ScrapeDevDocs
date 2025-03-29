@@ -3,7 +3,7 @@
 To regularly crawl online developer documentation and maintain an up-to-date, structured set of offline markdown files containing the documentation. The project must achieve this goal with two independent functions:
 
 - **Function 1 Goal:** Generate a markdown file with a tree structure diagram of the contents of a website's navigation menu.
-- **Function 2 Goal:** Crawl a list of URLs and extract the page content from each URL into a single markdown file.
+- **Function 2 Goal:** Crawl a list of URLs and extract the page content from each URL into a single markdown file. Input must be a URL pointing to a markdown file (e.g. https://example.com/scrape_website_menumap.md).
 
 **Project Scope:**
 
