@@ -43,12 +43,39 @@
      - Internationalized domain name handling
 
 4. **Content Conversion**
+
    - Mermaid.js CLI (v10.6.1)
      - SVG to markdown conversion
      - Diagram generation
    - Pandoc (v3.1.6)
      - Fallback content conversion
      - Format normalization
+
+5. **SVG Processing**
+   - svgpathtools (v1.6.1)
+     - Path analysis and manipulation
+     - Bounding box calculations
+   - svgwrite (v1.4.3)
+     - SVG generation and modification
+   - Custom SVG parser:
+     - Architecture diagram detection
+     - Node/edge extraction
+     - Text element processing
+     - Supports complex examples like:
+       - Home Assistant architecture diagrams
+       - Flowcharts with nested components
+       - State machine visualizations
+   - SVG Processing Requirements:
+     - Must preserve semantic relationships
+     - Handle minimum 5 levels of nesting
+     - Support text extraction from:
+       - Text elements
+       - Title attributes
+       - Data attributes
+     - Output formats:
+       - Mermaid.js markdown
+       - JSON structure
+       - Graphviz DOT format
 
 ## Infrastructure
 
@@ -84,6 +111,14 @@
   - Pytest (v8.0.0)
   - Hypothesis (v6.92.0)
   - Coverage.py (v7.3.2)
+  - SVG-specific tests:
+    - Architecture diagram parsing
+    - Node/edge validation
+    - Text extraction accuracy
+    - Conversion fidelity tests:
+      - Round-trip SVG->Mermaid->SVG
+      - Semantic equivalence checks
+      - Visual regression testing
 
 - **Code Quality**
   - Black (v23.12.0)
@@ -105,6 +140,24 @@
    - Easy to transform
 
 3. **GitHub Actions**
+
    - Native integration
    - No additional costs
    - Easy maintenance
+
+4. **SVG Processing Approach**
+   - Focus on architecture diagrams first
+   - Handle nested components
+   - Preserve semantic relationships
+   - Support common diagram types:
+     - Flowcharts
+     - State machines
+     - Component diagrams
+   - Conversion priorities:
+     1. Structural accuracy
+     2. Text preservation
+     3. Visual fidelity
+   - Fallback strategies:
+     - Manual review for complex diagrams
+     - Alternative text descriptions
+     - Original SVG preservation option

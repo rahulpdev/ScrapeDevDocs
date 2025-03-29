@@ -6,42 +6,61 @@
 
 - [x] Created initial Memory Bank structure
 - [x] Finalized project_brief.md (v1.0)
-- [x] Updated codebase_summary.md with CSV input (v1.3)
-- [x] Updated tech_stack.md with CSV validation (v1.4)
-- [x] Enhanced codebase_summary.md with validation details (v1.4)
-- [x] Added URL validation constraints to tech_stack.md (v1.6)
+- [x] Updated codebase_summary.md with CSV input (v1.4)
+- [x] Updated tech_stack.md with SVG processing details (v1.7)
+- [x] Enhanced current_task.md with SVG requirements (v1.4)
 
 ### Architecture
 
 - [x] Defined core components
 - [x] Established data flow patterns
 - [x] Selected all dependencies
+- [x] Implemented SVG processing framework
 
 ## Current Tasks
+
+### SVG Processing
+
+- [x] Architecture diagram parsing
+  - [x] Node/edge extraction
+  - [x] Text element processing
+  - [ ] Nested component handling (5+ levels)
+- [x] Conversion pipeline
+  - [x] SVG to Mermaid.js conversion
+  - [x] Semantic relationship preservation
+  - [ ] Output formatting (JSON/DOT)
+- [ ] Testing & validation
+  - [ ] Accuracy verification
+  - [ ] Multiple diagram type support:
+    - [x] Flowcharts
+    - [ ] State machines
+    - [ ] Component diagrams
+  - [ ] Comparison testing:
+    - [ ] Round-trip SVG->Mermaid->SVG
+    - [ ] Semantic equivalence checks
+    - [ ] Visual regression testing
 
 ### Function 1 (Navigation Crawler)
 
 - [x] URL processing implementation
-- [ ] Menu tree generation
+- [x] Menu tree generation
 - [ ] Diagram output formatting
 
 ### Function 2 (Content Extractor)
 
 - Input Requirements:
-
-  - [ ] Must be a URL pointing to a markdown file (e.g. https://example.com/scrape_website_menumap.md)
-
+  - [x] URL pointing to markdown file validation
 - Content extraction rules:
-  - [ ] Preserve heading hierarchy
+  - [x] Preserve heading hierarchy
   - [ ] Process images:
-    - [ ] For flowchart diagrams: convert to mermaid
-    - [ ] For other images: include URL, reference and alt text
-  - [ ] Replace relative URLs with absolute
-  - [ ] Maintain external links
-  - [ ] Include last updated timestamp
-  - [ ] Add page URL at file end
+    - [x] Flowchart diagram conversion
+    - [ ] Other image handling
+  - [x] Replace relative URLs with absolute
+  - [x] Maintain external links
+  - [x] Include last updated timestamp
+  - [x] Add page URL at file end
 - [ ] Output structure:
-  - [ ] Single folder per site
+  - [x] Single folder per site
   - [ ] Checklist file per site
 
 ### Infrastructure
@@ -51,7 +70,11 @@
 - [x] Logging configuration (Python logging module)
   - [x] JSON format
   - [x] Log rotation
-  - [ ] Error severity levels
+  - [x] Error severity levels
+- [x] CSV-specific error handling:
+  - [x] Per-row error tracking
+  - [x] Validation continues despite errors
+  - [x] Detailed error messages with line numbers
 
 ## Documentation Versions
 
@@ -59,6 +82,6 @@
 | ------------------- | ------- | ------------ |
 | project_brief.md    | v1.0    | 2025-03-28   |
 | codebase_summary.md | v1.4    | 2025-03-29   |
-| tech_stack.md       | v1.6    | 2025-03-29   |
-| project_tracker.md  | v1.7    | 2025-03-29   |
-| current_task.md     | v1.2    | 2025-03-28   |
+| tech_stack.md       | v1.7    | 2025-03-29   |
+| project_tracker.md  | v1.9    | 2025-03-29   |
+| current_task.md     | v1.4    | 2025-03-29   |
