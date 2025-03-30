@@ -9,48 +9,29 @@
   - codebase_summary.md: v1.4
   - tech_stack.md: v1.7
   - project_tracker.md: v1.8
-  - current_task.md: v1.4
+  - current_task.md: v1.6
 
 ## Next Steps
 
 ### SVG Processing Implementation
 
-1. **Architecture Diagram Analysis**
+1. **Comprehensive Conversion Approach**
 
-   - Parse complex SVG diagrams (e.g., Home Assistant architecture)
-   - Extract nodes and connections
-   - Identify text labels and relationships
-   - Handle nested components (minimum 5 levels)
-   - Support text extraction from:
+   - Extract full SVG content including:
      - Text elements
-     - Title attributes
-     - Data attributes
+     - Components and nodes
+     - Paths and connections
+     - Process steps and architecture elements
+   - Attempt conversion to Mermaid diagram format
+   - Preserve original SVG as fallback
 
-2. **Conversion Pipeline**
-
-   - SVG to Mermaid.js conversion
-   - Preserve semantic relationships
-   - Generate hierarchical structure
-   - Output formats:
-     - Mermaid.js markdown
-     - JSON structure
-     - Graphviz DOT format
-   - Output to docs/architecture/ directory
-
-3. **Testing & Validation**
-   - Verify accuracy of converted diagrams
-   - Test with multiple diagram types:
-     - Flowcharts
-     - State machines
-     - Component diagrams
-   - Conversion fidelity tests:
-     - Round-trip SVG->Mermaid->SVG
-     - Semantic equivalence checks
-     - Visual regression testing
-   - Fallback strategies:
-     - Manual review for complex diagrams
-     - Alternative text descriptions
-     - Original SVG preservation option
+2. **Implementation Notes**
+   - Focus on process/procedure/architecture diagrams
+   - Analyze diagram structure for Mermaid conversion
+   - Fallback conditions:
+     - Non-process diagrams (logos, illustrations)
+     - Conversion failures
+     - Complex diagrams with unsupported elements
 
 ### Navigation Crawler Implementation
 
