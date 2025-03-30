@@ -31,9 +31,16 @@
    - Simple fallback to original content on any failure
    - Original content preservation for non-SVG images
 
-5. **Automation**
-   - GitHub Actions workflow at `.github/workflows/daily-scrape.yml`
-   - Scheduled daily execution
+5. **Concurrency System**
+   - Write queue for atomic file operations
+   - File locking (fcntl) for:
+     - Menu map files
+     - Log files
+     - Version tracking
+   - Thread-per-row processing with:
+     - Independent error handling
+     - Automatic resource cleanup
+     - No shared state between rows
 
 ## Data Flow
 
@@ -42,10 +49,14 @@ flowchart LR
     A[urls.txt/CSV] --> B[Validation]
     B -->|Valid| C[Navigation Crawler]
     B -->|Errors| D[Error Log]
-    C --> E[*_menumap.md]
-    A --> F[Content Extractor]
-    F --> G[Site Folders]
-    F --> H[*_scrape_checklist.md]
+    C --> E[Write Queue]
+    E -->|Atomic Write| F[*_menumap.md]
+    A --> G[Content Extractor]
+    G --> H[Site Folders]
+    G --> I[*_scrape_checklist.md]
+
+    subgraph Concurrency
+    end
 ```
 
 ## External Dependencies
@@ -56,6 +67,7 @@ flowchart LR
   - Requests: HTTP requests
   - Mermaid.js CLI: Diagram conversion
   - Python csv module: CSV processing with validation
+  - fcntl: File locking
 
 - **Infrastructure**
   - GitHub Actions: Scheduled execution
@@ -69,3 +81,7 @@ flowchart LR
   - Non-blocking error processing
 - Documented automation workflow
 - Created standardized documentation templates
+- Added concurrency system with:
+  - Write queue
+  - File locking
+  - Thread-per-row processing

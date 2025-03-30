@@ -153,7 +153,23 @@
    - No additional costs
    - Easy maintenance
 
-4. **SVG Processing Approach**
+4. **Concurrency Strategy**
+
+   - Queue-based write system for \_menumap.md files
+   - Granular file locking (fcntl) for:
+     - Log file appends
+     - Menu map file creation
+     - Version tracking updates
+   - Thread-per-row CSV processing with:
+     - Independent error handling
+     - No shared state between rows
+     - Automatic cleanup of resources
+   - Guarantees:
+     - Atomic file writes
+     - No partial writes visible
+     - Failed rows don't affect others
+
+5. **SVG Processing Approach**
    - Focus on architecture diagrams first
    - Handle nested components
    - Preserve semantic relationships
