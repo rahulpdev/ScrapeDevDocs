@@ -71,17 +71,18 @@
 
 - Error Handling:
   - [ ] Ensure robust error handling for all Function 2 stages
-  - [x] Refine logging for Function 2 specifics (JSON format, rotation, levels)
+  - [x] Refine logging for Function 2 specifics (JSON format, rotation, levels, severity, context, taxonomy)
 - Concurrency:
   - [ ] Verify thread-per-URL model for Function 2
-  - [ ] Test file locking for checklist/log files
+- [ ] Test file locking for checklist/log files
 
 ## Documentation Versions
 
 | Document            | Version | Last Updated |
 | ------------------- | ------- | ------------ |
 | project_brief.md    | v1.3    | 2025-03-31   |
-| codebase_summary.md | v1.6    | 2025-03-31   |
-| tech_stack.md       | v1.9    | 2025-03-31   |
-| project_tracker.md  | v1.15   | 2025-03-31   |
+| codebase_summary.md | v1.7    | 2025-03-31   |
+| tech_stack.md       | v1.10   | 2025-03-31   |
+| project_tracker.md  | v1.16   | 2025-03-31   |
 | current_task.md     | v1.8    | 2025-03-31   |
+| error_codes.md      | v1.0    | 2025-03-31   |

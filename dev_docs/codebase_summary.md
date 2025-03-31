@@ -22,10 +22,9 @@
 
 4. **Concurrency System**
    - Write queue for atomic file operations
-   - File locking (fcntl) for:
-     - Menu map files
-     - Log files
-     - Version tracking
+     - File locking (fcntl) for:
+       - Checklist files (`<website name>_scrape_checklist.md`)
+       - Log files (`<website name>_errors.log`)
    - Thread-per-row processing with:
      - Independent error handling
      - Automatic resource cleanup
@@ -60,9 +59,10 @@ flowchart LR
   - Mermaid.js CLI: Diagram conversion
   - Python Markdown Parser (e.g., `markdown` library or similar): To parse the input tree structure file.
   - fcntl: File locking (if applicable on the target OS, for checklist/log files)
+  - `dev_docs/error_codes.md`: Defines the structured error codes used in logging.
 
 - **Infrastructure**
-  - Python 3.10+: Runtime environment
+- Python 3.10+: Runtime environment
 
 ## Recent Changes
 

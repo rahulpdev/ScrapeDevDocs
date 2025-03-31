@@ -83,7 +83,11 @@
     - Performance improvements
 
 - **Error Handling**
-  - Structured logging (JSON)
+  - Structured logging (JSON) with:
+    - Severity levels (INFO, WARN, ERROR)
+    - Detailed context (e.g., SVG metadata: dimensions, element counts)
+    - Performance metrics (e.g., conversion attempt duration)
+    - Reference to a defined error code taxonomy (see `error_codes.md` - _to be created_)
   - Sentry.io integration (optional, if needed)
   - Circuit breaker pattern (optional, if needed for external calls)
   - Robust error handling for:
