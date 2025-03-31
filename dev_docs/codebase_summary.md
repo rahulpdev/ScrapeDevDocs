@@ -2,36 +2,25 @@
 
 ## Key Components
 
-1. **URL/CSV Processor**
+1. **Input Processor (Function 2)**
 
-   - Reads URLs from `urls.txt` (root level)
-   - Accepts CSV input with URL columns
-   - Validates and normalizes URLs
-     - Strict URL format validation
-     - Automatic whitespace trimming
-     - Line number tracking for errors
-     - Non-blocking validation (continues processing valid rows)
-   - Handles input/output for both functions
+   - Accepts a URL pointing to a markdown file containing a tree structure of URLs.
+   - Validates the input URL.
+   - Parses the markdown file to extract the list of URLs to be crawled.
 
-2. **Navigation Crawler (Function 1)**
+2. **Content Extractor (Function 2)**
 
-   - Generates `*_menumap.md` files in root
-   - Uses recursive traversal for nested menus
-   - Outputs tree structure diagrams
+   - Creates per-site folders (e.g. `<website name>_docs/`) in the project root.
+   - Generates markdown files preserving structure for each crawled URL.
+   - Maintains `<website name>_scrape_checklist.md` trackers in the project root.
 
-3. **Content Extractor (Function 2)**
-
-   - Creates per-site folders (e.g. `example-com/`)
-   - Generates markdown files preserving structure
-   - Maintains `*_scrape_checklist.md` trackers
-
-4. **Image Processing**
+3. **Image Processing**
 
    - SVG conversion to mermaid diagrams
    - Simple fallback to original content on any failure
    - Original content preservation for non-SVG images
 
-5. **Concurrency System**
+4. **Concurrency System**
    - Write queue for atomic file operations
    - File locking (fcntl) for:
      - Menu map files
@@ -46,16 +35,19 @@
 
 ```mermaid
 flowchart LR
-    A[urls.txt/CSV] --> B[Validation]
-    B -->|Valid| C[Navigation Crawler]
-    B -->|Errors| D[Error Log]
-    C --> E[Write Queue]
-    E -->|Atomic Write| F[*_menumap.md]
-    A --> G[Content Extractor]
-    G --> H[Site Folders]
-    G --> I[*_scrape_checklist.md]
+    A["Input URL (Markdown Tree)"] --> B["Input Validation"]
+    B -->|Valid| C["Markdown Parser"]
+    B -->|Errors| D["Error Log"]
+    C --> E["URL List Extractor"]
+    E --> G["Content Extractor"]
+    G --> H["Site Folder (<website name>_docs/)"]
+    G --> I["Checklist (<website name>_scrape_checklist.md)"]
+    G --> J["Write Queue"]
+    J -->|Atomic Write| K["Markdown Content Files"]
 
     subgraph Concurrency
+        direction LR
+        L["Thread-per-URL Processing"] --> J
     end
 ```
 
@@ -66,11 +58,10 @@ flowchart LR
   - BeautifulSoup4: HTML parsing
   - Requests: HTTP requests
   - Mermaid.js CLI: Diagram conversion
-  - Python csv module: CSV processing with validation
-  - fcntl: File locking
+  - Python Markdown Parser (e.g., `markdown` library or similar): To parse the input tree structure file.
+  - fcntl: File locking (if applicable on the target OS, for checklist/log files)
 
 - **Infrastructure**
-  - GitHub Actions: Scheduled execution
   - Python 3.10+: Runtime environment
 
 ## Recent Changes
@@ -83,5 +74,5 @@ flowchart LR
 - Created standardized documentation templates
 - Added concurrency system with:
   - Write queue
-  - File locking
-  - Thread-per-row processing
+  - File locking (for checklist/log files)
+  - Thread-per-URL processing (adjusted from thread-per-row)

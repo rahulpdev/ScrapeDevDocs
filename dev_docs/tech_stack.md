@@ -16,7 +16,7 @@
      - Faster parsing backend for BeautifulSoup
      - XPath support for complex queries
 
-2. **HTTP Client & File Processing**
+2. **HTTP Client & File/Input Processing**
 
    - Requests (v2.31.0)
      - Simplified HTTP operations
@@ -25,26 +25,14 @@
    - urllib3 (v2.0.7)
      - Connection pooling
      - SSL verification
-   - Python csv module
-     - CSV file parsing
-     - Header row handling
-     - Type conversion
-     - New validation features:
-       - URL validation with whitespace trimming
-       - Line number tracking for errors
-       - Non-blocking error handling
-       - Navigation selector column presence check
+   - Python Markdown Parser (e.g., `markdown` library, `mistune`)
+     - Parsing the input markdown file containing the URL tree structure.
+     - Extracting URLs from the tree.
 
 3. **URL Validation**
 
-   - Python's urlparse with custom extensions
-   - Explicit handling for 30+ common TLDs (fixed list)
-   - Special cases for CMS paths (WordPress, Drupal)
-   - Maximum redirect depth: 5
-   - Explicitly excludes:
-     - Cyclic redirect detection
-     - TLD list updates
-     - Internationalized domain name handling
+   - Python's `urllib.parse` for URL validation and manipulation.
+   - Basic validation for input URL format (pointing to the markdown tree file).
 
 4. **Content Conversion**
 
@@ -93,24 +81,17 @@
     - Type hint support
     - Pattern matching
     - Performance improvements
-  - GitHub Actions
-    - Ubuntu-latest runner
-    - Scheduled triggers (daily at 00:00 UTC)
-    - Artifact caching (7 day retention)
-    - Workflow configuration:
-      - Runs Function 1 (Navigation Crawler)
-      - Input: urls.txt from repo root
-      - Output: \*\_menumap.md files
-      - Timeout: 30 minutes
 
 - **Error Handling**
   - Structured logging (JSON)
-  - Sentry.io integration
-  - Circuit breaker pattern
-  - New CSV-specific error handling:
-    - Per-row error tracking
-    - Validation continues despite errors
-    - Detailed error messages with line numbers
+  - Sentry.io integration (optional, if needed)
+  - Circuit breaker pattern (optional, if needed for external calls)
+  - Robust error handling for:
+    - Input URL fetching/validation
+    - Markdown parsing
+    - URL extraction
+    - Content crawling (network, parsing errors)
+    - File I/O
 
 ## Development Tooling
 
@@ -141,35 +122,29 @@
    - Simpler deployment
    - Existing team expertise
 
-2. **Markdown as Output**
+2. **Markdown as Primary Format**
 
    - Portable
    - Version control friendly
    - Easy to transform
 
-3. **GitHub Actions**
-
-   - Native integration
-   - No additional costs
-   - Easy maintenance
-
-4. **Concurrency Strategy**
+3. **Concurrency Strategy**
 
    - Queue-based write system for \_menumap.md files
    - Granular file locking (fcntl) for:
      - Log file appends
-     - Menu map file creation
-     - Version tracking updates
-   - Thread-per-row CSV processing with:
-     - Independent error handling
-     - No shared state between rows
-     - Automatic cleanup of resources
+     - Checklist file updates (`<website name>_scrape_checklist.md`)
+     - Log file appends
+   - Thread-per-URL processing (extracted from the input markdown tree) with:
+     - Independent error handling for each URL crawl.
+     - No shared state between URL processing threads.
+     - Automatic cleanup of resources per thread.
    - Guarantees:
-     - Atomic file writes
-     - No partial writes visible
-     - Failed rows don't affect others
+     - Atomic file writes for content files (via write queue).
+     - No partial content file writes visible.
+     - Failures during one URL crawl don't stop others.
 
-5. **SVG Processing Approach**
+4. **SVG Processing Approach**
    - Focus on architecture diagrams first
    - Handle nested components
    - Preserve semantic relationships

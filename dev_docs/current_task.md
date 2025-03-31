@@ -2,13 +2,14 @@
 
 ## Context
 
-- Memory Bank documentation complete and up-to-date
-- All architecture decisions finalized and documented
-- Current documentation versions:
+- **Project Scope Change:** Function 1 (Navigation Menu Sitemap Generation) has been removed. The project now focuses solely on Function 2 (URL Content Extraction and Markdown Conversion).
+- Memory Bank documentation is being updated to reflect this change.
+- Architecture decisions related to Function 1 are now obsolete.
+- Current documentation versions (prior to this update):
   - project_brief.md: v1.0
   - codebase_summary.md: v1.5
   - tech_stack.md: v1.8
-  - project_tracker.md: v1.8
+  - project_tracker.md: v1.12
   - current_task.md: v1.7
 
 ## Completed Work
@@ -36,68 +37,53 @@
 
 ## Next Steps
 
-### SVG Processing Implementation
+## Next Steps
 
-1. **Comprehensive Conversion Approach**
+### Function 2: Content Extractor Implementation
 
-   - Extract full SVG content including:
-     - Text elements
-     - Components and nodes
-     - Paths and connections
-     - Process steps and architecture elements
-   - Attempt conversion to Mermaid diagram format
-   - Preserve original SVG as fallback
+1.  **Input Processing:**
 
-2. **Implementation Notes**
-   - Focus on process/procedure/architecture diagrams
-   - Analyze diagram structure for Mermaid conversion
-   - Fallback conditions:
-     - Non-process diagrams (logos, illustrations)
-     - Conversion failures
-     - Complex diagrams with unsupported elements
+    - Implement logic to accept a URL (pointing to a markdown tree file) via CLI input.
+    - Fetch the content from the provided URL.
+    - Parse the fetched markdown content to extract the list of target URLs to crawl.
+    - Validate extracted URLs.
+    - Create/overwrite the `<website name>_scrape_checklist.md` file with the extracted URLs and timestamp.
 
-### Navigation Crawler Implementation
+2.  **Content Extraction & Conversion:**
 
-- Input processing:
-  - Read from urls.txt or CSV files
-  - Support multiple URL columns in CSV
-  - Validate and normalize URLs
-  - Handle redirects (max depth: 5)
-- Menu tree generation:
-  - Parse HTML navigation elements
-  - Build hierarchical structure
-  - Output to docs/menus/ directory as markdown
+    - Implement the core crawling logic for the extracted URLs.
+    - Ensure preservation of heading hierarchy.
+    - Implement image processing:
+      - SVG to Mermaid conversion (using existing SVG processing logic).
+      - Handling of other image formats (preserving URL, reference, alt text).
+    - Implement URL replacement (relative to absolute).
+    - Preserve external links.
+    - Include "Last Updated" data and source URL in output files.
+    - Update the corresponding checklist file upon successful processing of each URL.
 
-### Infrastructure Setup
+3.  **Output Structure:**
 
-- Logging:
-  - Configure Python logging module
-  - Set up log rotation
-  - Error severity levels
-  - JSON format for structured logging
-- Error handling:
-  - Implement circuit breaker pattern
-  - Configure Sentry.io alerts
-  - Add retry logic for HTTP requests
-  - CSV-specific error handling:
-    - Per-row error tracking
-    - Validation continues despite errors
-    - Detailed error messages with line numbers
+    - Ensure files are saved correctly in the `<website name>_docs` folder.
 
-### Content Extractor Preparation
+4.  **SVG Processing Refinement (as part of Function 2)**
+    - Finalize testing of SVG to Mermaid conversion within the context of Function 2's content extraction.
+    - Ensure fallback mechanisms work correctly.
 
-- Content extraction rules:
-  - Preserve heading hierarchy
-  - Process images:
-    - For flowchart diagrams: convert to mermaid
-    - For other images: include URL, reference and alt text
-  - Replace relative URLs with absolute
-  - Maintain external links
-  - Include last updated timestamp
-  - Add page URL at file end
-- Output structure:
-  - Single folder per site (no subfolders)
-  - Checklist file per site
-  - Input requirements:
-    - Must be URL pointing to markdown file
-    - Example: https://example.com/scrape_website_menumap.md
+### Infrastructure Refinement
+
+1.  **Error Handling:**
+
+    - Ensure robust error handling covers all stages of Function 2 (input fetching/parsing, crawling, conversion, file I/O).
+    - Refine logging for Function 2 specifics.
+
+2.  **Concurrency:**
+    - Verify the thread-per-URL concurrency model works effectively for Function 2.
+    - Test file locking for checklist and log files under concurrent access.
+
+### Documentation Finalization
+
+1.  Update `project_tracker.md` to reflect the removal of Function 1 tasks and update Function 2 tasks.
+2.  Increment version numbers for all modified Memory Bank documents.
+3.  Update this `current_task.md` file with the final plan and new version number.
+
+_(Previous "Next Steps" related to SVG Processing, Navigation Crawler, and specific Infrastructure items have been integrated or removed based on the scope change)_
