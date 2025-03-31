@@ -10,6 +10,7 @@
 - [x] Updated tech_stack.md reflecting Function 1 removal (v1.9)
 - [x] Updated current_task.md reflecting Function 1 removal (v1.8)
 - [x] Updated project_brief.md reflecting Function 1 removal (v1.1)
+- [x] Clarified image handling logic in project_brief.md (v1.2)
 
 ### Architecture
 
@@ -76,8 +77,8 @@
 
 | Document            | Version | Last Updated |
 | ------------------- | ------- | ------------ |
-| project_brief.md    | v1.1    | 2025-03-31   |
+| project_brief.md    | v1.2    | 2025-03-31   |
 | codebase_summary.md | v1.6    | 2025-03-31   |
 | tech_stack.md       | v1.9    | 2025-03-31   |
-| project_tracker.md  | v1.13   | 2025-03-31   |
+| project_tracker.md  | v1.14   | 2025-03-31   |
 | current_task.md     | v1.8    | 2025-03-31   |

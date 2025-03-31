@@ -9,10 +9,15 @@
   - project_brief.md: v1.0
   - codebase_summary.md: v1.5
   - tech_stack.md: v1.8
-  - project_tracker.md: v1.12
-  - current_task.md: v1.7
+  - project_tracker.md: v1.14
+  - current_task.md: v1.8
 
 ## Completed Work
+
+### Documentation Updates
+
+1.  **Function 1 Removal:** Updated all essential documents (`project_brief.md`, `codebase_summary.md`, `tech_stack.md`, `current_task.md`, `project_tracker.md`) to remove Function 1 scope.
+2.  **Image Handling Clarification:** Refined the image processing requirements in `project_brief.md` (v1.2) and updated `project_tracker.md` (v1.14).
 
 ### Concurrency Implementation
 
@@ -82,8 +87,8 @@
 
 ### Documentation Finalization
 
-1.  Update `project_tracker.md` to reflect the removal of Function 1 tasks and update Function 2 tasks.
-2.  Increment version numbers for all modified Memory Bank documents.
-3.  Update this `current_task.md` file with the final plan and new version number.
+1.  Update `project_tracker.md` to reflect the progress on Function 2 tasks.
+2.  Increment version numbers for all modified Memory Bank documents upon task completion or significant changes.
+3.  Update this `current_task.md` file with the next focus and new version number after completing a significant step.
 
 _(Previous "Next Steps" related to SVG Processing, Navigation Crawler, and specific Infrastructure items have been integrated or removed based on the scope change)_

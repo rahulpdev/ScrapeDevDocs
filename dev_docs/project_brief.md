@@ -13,19 +13,21 @@ To crawl online developer documentation specified in a tree-structure markdown f
         - Do NOT remove any content between section headers.
         - Replace all relative path URLs with full path URLs.
         - Preserve all external links as markdown references.
-        - Retrieve all images from image URLs. For each image:
-          - If image is SVG format:
-            - Attempt conversion to mermaid diagram preserving:
+        - Process all images referenced on the webpage:
+          - Identify the image URL and alt text from the HTML.
+          - If the image URL points to an SVG file (based on extension or content type):
+            - Retrieve the SVG file.
+            - Attempt conversion to a Mermaid diagram, preserving:
               - Node relationships and hierarchy
               - Connector directions and types
               - Label positioning and content
             - On any conversion failure or invalid SVG:
-              - Preserve original image reference with URL and alt text
-              - Do not include error notices
-              - Do not retain failed conversion attempts
-          - For all other image formats (PNG, JPG, etc):
-          - Do not retain image files
-            - Preserve original image with URL, reference and alt text
+              - Preserve the original image reference using its URL and alt text.
+              - Do not include error notices or retain failed conversion attempts.
+            - Discard the SVG file after use.
+          - For all other image formats (PNG, JPG, etc.) or if the format cannot be determined as SVG:
+            - Do **not** download the image file.
+            - Preserve the original image reference using its URL and alt text.
         - Preserve "Last Updated" data verbatim.
       - For each markdown file:
         - Add the webpage full path URL to the end of the file.
