@@ -42,6 +42,7 @@ To crawl online developer documentation specified in a tree-structure markdown f
           - Source URL reference
       - Accept as a terminal input (with input validation) a URL to a GitHub repository raw file (or similar raw text source) that contains a tree structure markdown diagram (like the example provided: `https://raw.githubusercontent.com/rahulpdev/WebsiteNavbarMap/refs/heads/main/output_maps/developers_home_assistant_io_nav_map.md`). Each branch of the tree represents a URL to be crawled.
       - After accepting a valid terminal input, create/overwrite the content of `<website name>_scrape_checklist.md` with a checklist of the URLs extracted from the tree structure diagram.
+      - During execution, display a progress bar in the terminal indicating the number of URLs successfully processed out of the total (e.g., "Processed Y of X URLs").
 
 2.  **Architectural Assumptions**
 

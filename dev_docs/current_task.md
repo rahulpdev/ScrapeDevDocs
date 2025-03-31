@@ -8,9 +8,9 @@
 - Current documentation versions (prior to this update):
   - project_brief.md: v1.0
   - codebase_summary.md: v1.5
-  - tech_stack.md: v1.8
-  - project_tracker.md: v1.14
-  - current_task.md: v1.8
+  - tech_stack.md: v1.9
+  - project_tracker.md: v1.15
+  - current_task.md: v1.9
 
 ## Completed Work
 
@@ -18,6 +18,7 @@
 
 1.  **Function 1 Removal:** Updated all essential documents (`project_brief.md`, `codebase_summary.md`, `tech_stack.md`, `current_task.md`, `project_tracker.md`) to remove Function 1 scope.
 2.  **Image Handling Clarification:** Refined the image processing requirements in `project_brief.md` (v1.2) and updated `project_tracker.md` (v1.14).
+3.  **Progress Bar Requirement:** Added requirement for a terminal progress bar during execution to `project_brief.md` (v1.3) and updated `project_tracker.md` (v1.15).
 
 ### Concurrency Implementation
 
