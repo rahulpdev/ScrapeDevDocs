@@ -6,11 +6,11 @@
 - Memory Bank documentation is being updated to reflect this change.
 - Architecture decisions related to Function 1 are now obsolete.
 - Current documentation versions (prior to this update):
-  - project_brief.md: v1.0
-  - codebase_summary.md: v1.5
-  - tech_stack.md: v1.9
-  - project_tracker.md: v1.16
-  - current_task.md: v1.8
+  - project_brief.md: v1.3
+  - codebase_summary.md: v1.7
+  - tech_stack.md: v1.10
+  - project_tracker.md: v1.17
+  - current_task.md: v1.10
   - error_codes.md: v1.0
 
 ## Completed Work
@@ -48,55 +48,44 @@
    - Thread-per-URL processing with:
      - Independent error handling
      - Automatic resource cleanup
-     - No shared state between rows
+     - No shared state between threads/URLs
 
-## Next Steps
+## Current Focus: Transition to Implementation
 
-### Function 2: Content Extractor Implementation
+The design and documentation phase is complete. The project is now transitioning to the implementation phase, focusing on building Function 2 (Content Extractor).
 
-1.  **Input Processing:**
+## Next Steps: Implementation Phase 1
 
-    - Implement logic to accept a URL (pointing to a markdown tree file) via CLI input.
-    - Fetch the content from the provided URL.
-    - Parse the fetched markdown content to extract the list of target URLs to crawl.
-    - Validate extracted URLs.
-    - Create/overwrite the `<website name>_scrape_checklist.md` file with the extracted URLs and timestamp.
+### 1. Core Script Structure & Input Processing
 
-2.  **Content Extraction & Conversion:**
+- **Setup:**
+  - Create the main Python script file (e.g., `scrape_docs.py`).
+  - Initialize basic logging configuration using the structured JSON format defined in `tech_stack.md` and `error_codes.md`.
+  - Set up basic argument parsing (using `argparse`) to accept the input markdown tree URL.
+- **Input Fetching & Parsing:**
+  - Implement logic to fetch content from the provided URL using `requests`. Include error handling (network errors, invalid URL).
+  - Implement logic to parse the fetched markdown content using the `markdown` library to extract the list of target URLs. Include error handling (parsing errors).
+  - Implement validation for extracted URLs (basic format check).
+- **Checklist Generation:**
+  - Implement logic to derive `<website name>` from the input URL (e.g., based on domain).
+  - Create/overwrite the `<website name>_scrape_checklist.md` file with the extracted URLs as a markdown checklist. Include error handling (file I/O).
 
-    - Implement the core crawling logic for the extracted URLs.
-    - Ensure preservation of heading hierarchy.
-    - Implement image processing:
-      - SVG to Mermaid conversion (using existing SVG processing logic).
-      - Handling of other image formats (preserving URL, reference, alt text).
-    - Implement URL replacement (relative to absolute).
-    - Preserve external links.
-    - Include "Last Updated" data and source URL in output files.
-    - Update the corresponding checklist file upon successful processing of each URL.
+### 2. Foundational Content Extraction (Single URL)
 
-3.  **Output Structure:**
+- **Target:** Implement the basic crawl and markdown generation for a _single_ URL first, without concurrency or complex image handling initially.
+- **Steps:**
+  - Fetch HTML content for a sample target URL.
+  - Parse HTML using BeautifulSoup.
+  - Extract and preserve heading hierarchy.
+  - Implement basic relative-to-absolute URL conversion for links.
+  - Preserve external links.
+  - Add source URL to the end of the content.
+  - Save the output to a corresponding file in the `<website name>_docs` folder (ensure folder creation).
 
-    - Ensure files are saved correctly in the `<website name>_docs` folder.
+### Documentation Finalization (Post Phase 1)
 
-4.  **SVG Processing Refinement (as part of Function 2)**
-    - Finalize testing of SVG to Mermaid conversion within the context of Function 2's content extraction.
-    - Ensure fallback mechanisms work correctly.
-
-### Infrastructure Refinement
-
-1.  **Error Handling:**
-
-    - Ensure robust error handling covers all stages of Function 2 (input fetching/parsing, crawling, conversion, file I/O).
-    - Refine logging for Function 2 specifics.
-
-2.  **Concurrency:**
-    - Verify the thread-per-URL concurrency model works effectively for Function 2.
-    - Test file locking for checklist and log files under concurrent access.
-
-### Documentation Finalization
-
-1.  Update `project_tracker.md` to reflect the progress on Function 2 tasks.
+1.  Update `project_tracker.md` to mark completed Phase 1 tasks.
 2.  Increment version numbers for all modified Memory Bank documents upon task completion or significant changes.
-3.  Update this `current_task.md` file (v1.10) with the next focus and new version number after completing a significant step.
+3.  Update this `current_task.md` file (v1.12) with the next implementation focus (e.g., Concurrency, Full Image Processing) and new version number after completing Phase 1.
 
-_(Previous "Next Steps" related to SVG Processing, Navigation Crawler, and specific Infrastructure items have been integrated or removed based on the scope change)_
+_(Previous "Next Steps" have been restructured into the implementation plan)_

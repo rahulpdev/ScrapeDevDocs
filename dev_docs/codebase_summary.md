@@ -28,7 +28,7 @@
    - Thread-per-URL processing with:
      - Independent error handling
      - Automatic resource cleanup
-     - No shared state between rows
+     - No shared state between threads/URLs
 
 ## Data Flow
 
@@ -68,8 +68,6 @@ flowchart LR
 
 - Implemented new file structure per project_brief.md
 - Added proper error handling for all components
-  - Enhanced CSV validation with line tracking
-  - Non-blocking error processing
 - Documented automation workflow
 - Created standardized documentation templates
 - Added concurrency system with:

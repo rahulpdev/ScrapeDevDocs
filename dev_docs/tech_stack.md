@@ -5,16 +5,13 @@
 1. **HTML Processing**
 
    - BeautifulSoup4 (v4.12.0)
-     - Robust HTML parsing
-     - Handles malformed markup
-     - XPath-like navigation
-   - cheerio (v1.0.7)
-     - Fast HTML parsing and manipulation
-     - jQuery-like syntax
-     - Server-side DOM implementation
-   - lxml (v4.9.3)
-     - Faster parsing backend for BeautifulSoup
-     - XPath support for complex queries
+   - Robust HTML parsing
+   - Handles malformed markup
+   - XPath-like navigation
+
+- lxml (v4.9.3)
+  - Faster parsing backend for BeautifulSoup
+  - XPath support for complex queries
 
 2. **HTTP Client & File/Input Processing**
 
@@ -23,11 +20,12 @@
      - Session persistence
      - Automatic retry logic
    - urllib3 (v2.0.7)
-     - Connection pooling
-     - SSL verification
-   - Python Markdown Parser (e.g., `markdown` library, `mistune`)
-     - Parsing the input markdown file containing the URL tree structure.
-     - Extracting URLs from the tree.
+   - Connection pooling
+   - SSL verification
+
+- `markdown` library (Python standard)
+  - Parsing the input markdown file containing the URL tree structure.
+  - Extracting URLs from the tree.
 
 3. **URL Validation**
 
@@ -37,15 +35,8 @@
 4. **Content Conversion**
 
    - Mermaid.js CLI (v10.6.1)
-     - SVG to markdown conversion
-     - Diagram generation
-   - svg2mermaid (v2.4.1)
-     - Specialized SVG to Mermaid conversion
-     - Architecture diagram detection
-     - Node/edge extraction
-   - Pandoc (v3.1.6)
-     - Fallback content conversion
-     - Format normalization
+   - SVG to markdown conversion
+   - Diagram generation
 
 5. **SVG Processing**
    - svgpathtools (v1.6.1)
@@ -67,11 +58,9 @@
      - Support text extraction from:
        - Text elements
        - Title attributes
-       - Data attributes
-     - Output formats:
-       - Mermaid.js markdown
-       - JSON structure
-       - Graphviz DOT format
+     - Data attributes
+   - Output format:
+     - Mermaid.js markdown (integrated into final content)
 
 ## Infrastructure
 
@@ -92,10 +81,10 @@
   - Circuit breaker pattern (optional, if needed for external calls)
   - Robust error handling for:
     - Input URL fetching/validation
-    - Markdown parsing
+    - Markdown parsing (`markdown` library errors)
     - URL extraction
-    - Content crawling (network, parsing errors)
-    - SVG image processing
+    - Content crawling (network, HTML parsing errors via BeautifulSoup)
+    - SVG image processing (fetching, custom parser errors, Mermaid CLI errors)
     - File I/O
 
 ## Development Tooling
