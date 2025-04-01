@@ -25,7 +25,7 @@
      - File locking (fcntl) for:
        - Checklist files (`<website name>_scrape_checklist.md`)
        - Log files (`<website name>_errors.log`)
-   - Thread-per-row processing with:
+   - Thread-per-URL processing with:
      - Independent error handling
      - Automatic resource cleanup
      - No shared state between rows

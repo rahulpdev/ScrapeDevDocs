@@ -21,7 +21,7 @@
 - [x] Implemented concurrency system:
   - [x] Queue-based write operations
   - [x] File locking (fcntl)
-  - [x] Thread-per-row processing
+  - [x] Thread-per-URL processing (adjusted from row-based)
 - [x] Implemented SVG processing framework
 
 ## Current Tasks
@@ -83,6 +83,6 @@
 | project_brief.md    | v1.3    | 2025-03-31   |
 | codebase_summary.md | v1.7    | 2025-03-31   |
 | tech_stack.md       | v1.10   | 2025-03-31   |
-| project_tracker.md  | v1.16   | 2025-03-31   |
-| current_task.md     | v1.8    | 2025-03-31   |
+| project_tracker.md  | v1.17   | 2025-04-01   |
+| current_task.md     | v1.10   | 2025-04-01   |
 | error_codes.md      | v1.0    | 2025-03-31   |

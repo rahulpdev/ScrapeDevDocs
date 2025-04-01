@@ -43,10 +43,9 @@
 2. **Implementation Details**
    - Queue-based write system for atomic operations
    - Granular file locking (fcntl) for:
-     - Menu map files
-     - Log files
-     - Version tracking
-   - Thread-per-row processing with:
+     - Checklist files (`<website name>_scrape_checklist.md`)
+     - Log files (`<website name>_errors.log`)
+   - Thread-per-URL processing with:
      - Independent error handling
      - Automatic resource cleanup
      - No shared state between rows
@@ -100,6 +99,6 @@
 
 1.  Update `project_tracker.md` to reflect the progress on Function 2 tasks.
 2.  Increment version numbers for all modified Memory Bank documents upon task completion or significant changes.
-3.  Update this `current_task.md` file (v1.9) with the next focus and new version number after completing a significant step.
+3.  Update this `current_task.md` file (v1.10) with the next focus and new version number after completing a significant step.
 
 _(Previous "Next Steps" related to SVG Processing, Navigation Crawler, and specific Infrastructure items have been integrated or removed based on the scope change)_

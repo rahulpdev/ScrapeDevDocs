@@ -87,7 +87,7 @@
     - Severity levels (INFO, WARN, ERROR)
     - Detailed context (e.g., SVG metadata: dimensions, element counts)
     - Performance metrics (e.g., conversion attempt duration)
-    - Reference to a defined error code taxonomy (see `error_codes.md` - _to be created_)
+    - Reference to a defined error code taxonomy (see `dev_docs/error_codes.md`)
   - Sentry.io integration (optional, if needed)
   - Circuit breaker pattern (optional, if needed for external calls)
   - Robust error handling for:
@@ -128,25 +128,21 @@
 
 2. **Markdown as Primary Format**
 
-   - Portable
-   - Version control friendly
-   - Easy to transform
-
 3. **Concurrency Strategy**
 
-   - Queue-based write system for \_menumap.md files
-   - Granular file locking (fcntl) for:
-     - Log file appends
+   - Queue-based write system for atomic file writes (content files).
+   - Granular file locking (fcntl) for shared resources:
      - Checklist file updates (`<website name>_scrape_checklist.md`)
-     - Log file appends
+     - Log file appends (`<website name>_errors.log`)
    - Thread-per-URL processing (extracted from the input markdown tree) with:
      - Independent error handling for each URL crawl.
      - No shared state between URL processing threads.
-     - Automatic cleanup of resources per thread.
-   - Guarantees:
-     - Atomic file writes for content files (via write queue).
-     - No partial content file writes visible.
-     - Failures during one URL crawl don't stop others.
+   - Automatic cleanup of resources per thread.
+
+- Guarantees:
+  - Atomic file writes for content files (via write queue).
+  - No partial content file writes visible.
+  - Failures during one URL crawl don't stop others.
 
 4. **SVG Processing Approach**
    - Focus on architecture diagrams first
