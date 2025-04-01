@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 """
-Main script for crawling developer documentation based on a markdown tree structure.
-Fetches content, processes HTML, handles images (including SVG to Mermaid conversion),
-and saves structured markdown files.
+Main script for crawling developer documentation based on a markdown tree
+structure. Fetches content, processes HTML, handles images (including SVG
+to Mermaid conversion), and saves structured markdown files.
 """
 
 import argparse
@@ -19,10 +19,11 @@ from markdownify import markdownify  # Added markdownify
 import threading  # Added threading
 import queue  # Added queue
 import time  # Added for potential sleep/backoff later
+from datetime import datetime # Added for milliseconds timestamp
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from pythonjsonlogger import jsonlogger  # Added for structured logging
-from tqdm import tqdm # Added for progress bar
+from tqdm import tqdm  # Added for progress bar
 # Placeholder for fcntl (if needed later for locking)
 
 # --- Constants ---
@@ -34,7 +35,7 @@ from tqdm import tqdm # Added for progress bar
 def setup_logging():
     """Sets up structured JSON logging."""
     logger = logging.getLogger()
-    logger.setLevel(logging.INFO) # Set root logger level
+    logger.setLevel(logging.INFO)  # Set root logger level
 
     # Prevent duplicate handlers if called multiple times
     if logger.hasHandlers():
@@ -42,7 +43,8 @@ def setup_logging():
 
     logHandler = logging.StreamHandler(sys.stdout)
     # Add filter to ensure only logs from this script are processed if needed
-    # formatter = jsonlogger.JsonFormatter('%(asctime)s %(levelname)s %(name)s %(message)s')
+    # formatter = jsonlogger.JsonFormatter('%(asctime)s %(levelname)s %(name)s
+    #  %(message)s')
     # More detailed format including potential extra fields
     formatter = jsonlogger.JsonFormatter(
         '%(asctime)s %(levelname)s %(name)s %(message)s %(pathname)s %(lineno)d %(error_code)s %(url)s %(details)s'
@@ -63,7 +65,8 @@ def setup_logging():
 def parse_arguments():
     """Parses command-line arguments."""
     parser = argparse.ArgumentParser(
-        description="Scrape developer documentation from a list specified in a markdown tree URL."
+        description="Scrape developer documentation from a list specified in "
+        "a markdown tree URL."
     )
     parser.add_argument(
         "tree_url",
@@ -80,7 +83,8 @@ def fetch_url_content(url):
         total=3,  # Total number of retries
         backoff_factor=1,  # Exponential backoff factor (e.g., 1s, 2s, 4s)
         status_forcelist=[500, 502, 503, 504],  # Status codes to retry on
-        allowed_methods=["HEAD", "GET", "OPTIONS"] # Use allowed_methods instead of method_whitelist
+        # Use allowed_methods instead of method_whitelist
+        allowed_methods=["HEAD", "GET", "OPTIONS"]
     )
     adapter = HTTPAdapter(max_retries=retry_strategy)
     session = requests.Session()
@@ -89,23 +93,41 @@ def fetch_url_content(url):
 
     logging.info(f"Fetching content from: {url}")
     try:
-        response = session.get(url, timeout=10) # Use the session
-        response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
+        response = session.get(url, timeout=10)  # Use the session
+        # Raise HTTPError for bad responses (4xx or 5xx)
+        response.raise_for_status()
         logging.info(f"Successfully fetched content from: {url}")
         return response.text
     except requests.exceptions.Timeout as e:
-        logging.error(f"Timeout fetching {url}: {e}", extra={'url': url, 'error_code': 1001})
+        logging.error(
+            f"Timeout fetching {url}: {e}",
+            extra={'url': url, 'error_code': 1001}
+            )
         return None
     except requests.exceptions.ConnectionError as e:
-        logging.error(f"Connection error fetching {url}: {e}", extra={'url': url, 'error_code': 1002})
+        logging.error(
+            f"Connection error fetching {url}: {e}",
+            extra={'url': url, 'error_code': 1002}
+            )
         return None
     except requests.exceptions.HTTPError as e:
-        # Log HTTP errors but potentially continue if needed (e.g., 404 is handled later)
-        logging.warning(f"HTTP error fetching {url}: {e.response.status_code}", extra={'url': url, 'error_code': 1003, 'status_code': e.response.status_code})
-        return None # Or return response if 404 needs specific handling
+        # Log HTTP errors but potentially continue if needed (e.g., 404
+        #  is handled later)
+        logging.warning(
+            f"HTTP error fetching {url}: {e.response.status_code}",
+            extra={
+                'url': url,
+                'error_code': 1003,
+                'status_code': e.response.status_code
+                }
+            )
+        return None  # Or return response if 404 needs specific handling
     except requests.exceptions.RequestException as e:
         # Catch other potential request exceptions
-        logging.error(f"General request error fetching {url}: {e}", extra={'url': url, 'error_code': 1000}) # Generic network error
+        logging.error(
+            f"General request error fetching {url}: {e}",
+            extra={'url': url, 'error_code': 1000}
+            )  # Generic network error
         return None
 
 
@@ -121,16 +143,20 @@ def extract_urls_from_tree(markdown_content):
         potential_url = parts[-1]
         if potential_url.startswith("http://") or potential_url.startswith("https://"):
             # Basic validation check
-            if validate_url(potential_url): # Use existing validation
-                 urls.append(potential_url)
+            if validate_url(potential_url):  # Use existing validation
+                urls.append(potential_url)
             else:
-                 logging.warning(f"Ignoring invalid URL format found in line: {line}")
-        # Optional: Add logging for lines that don't seem to contain a URL if needed
-        # else:
+                logging.warning(
+                    f"Ignoring invalid URL format found in line: {line}"
+                    )
+        # Optional: Add logging for lines that don't seem to contain a URL if
+        #  needed else:
         #     logging.debug(f"Line does not end with a URL: {line}")
 
     if not urls:
-        logging.warning("No URLs extracted from the tree structure file. Check format.")
+        logging.warning(
+            "No URLs extracted from the tree structure file. Check format."
+            )
     else:
         logging.info(f"Extracted {len(urls)} URLs using regex.")
     return urls
@@ -145,11 +171,13 @@ def validate_url(url):
     except ValueError:
         return False
 
+
 def get_website_name(url):
     """Extracts a usable website name from a URL."""
     try:
         parsed_url = urlparse(url)
-        # Use netloc (domain name), replace dots with underscores for filesystem safety
+        # Use netloc (domain name), replace dots with underscores for
+        #  filesystem safety
         name = parsed_url.netloc.replace('.', '_')
         return name
     except Exception as e:
@@ -193,7 +221,10 @@ def generate_checklist_file(website_name, urls):
         logging.info(f"Successfully created checklist file: {filename}")
         return True
     except IOError as e:
-        logging.error(f"Error writing checklist file {filepath}: {e}", extra={'filepath': filepath, 'error_code': 5002})
+        logging.error(
+            f"Error writing checklist file {filepath}: {e}",
+            extra={'filepath': filepath, 'error_code': 5002}
+            )
         return False
 
 
@@ -204,7 +235,9 @@ def update_checklist_file(checklist_filepath, url_to_check, lock):
     """Atomically updates the checklist file to mark a URL as done."""
     logging.debug(f"Attempting to update checklist for: {url_to_check}")
     with lock:
-        logging.debug(f"Acquired lock for checklist file: {checklist_filepath}")
+        logging.debug(
+            f"Acquired lock for checklist file: {checklist_filepath}"
+            )
         try:
             lines = []
             found = False
@@ -216,33 +249,57 @@ def update_checklist_file(checklist_filepath, url_to_check, lock):
             for i, line in enumerate(lines):
                 # Match the line specifically containing the URL
                 if line.strip() == f"- [ ] {url_to_check}":
-                    lines[i] = f"- [x] {url_to_check}  # Processed: {time.strftime('%Y-%m-%d %H:%M:%S')}\n"
+                    timestamp_ms = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3] # Format with milliseconds
+                    lines[i] = f"- [x] {url_to_check}  # Processed: {timestamp_ms}\n"
                     found = True
-                    logging.info(f"Marked URL as done in checklist: {url_to_check}")
+                    logging.info(
+                        f"Marked URL as done in checklist: {url_to_check}"
+                        )
                     break  # Stop after finding the first match
 
             if not found:
-                logging.warning(f"URL not found in checklist or already marked: {url_to_check}")
+                logging.warning(
+                    f"URL not found in checklist or already marked: {url_to_check}"
+                    )
 
             # Write the modified content back
             with open(checklist_filepath, 'w', encoding='utf-8') as f:
                 f.writelines(lines)
 
         except FileNotFoundError:
-            logging.error(f"Checklist file not found during update: {checklist_filepath}", extra={'filepath': checklist_filepath, 'error_code': 5004})
+            logging.error(
+                f"Checklist file not found during update: {checklist_filepath}",
+                extra={'filepath': checklist_filepath, 'error_code': 5004}
+                )
         except IOError as e:
-            logging.error(f"IOError updating checklist file {checklist_filepath}: {e}", extra={'filepath': checklist_filepath, 'error_code': 5002}) # Assuming write error
+            logging.error(
+                f"IOError updating checklist file {checklist_filepath}: {e}",
+                extra={'filepath': checklist_filepath, 'error_code': 5002}
+                )  # Assuming write error
         except Exception as e:
-            logging.error(f"Unexpected error updating checklist {checklist_filepath}: {e}", exc_info=True, extra={'filepath': checklist_filepath, 'error_code': 9001})
+            logging.error(
+                f"Unexpected error updating checklist {checklist_filepath}: {e}",
+                exc_info=True,
+                extra={'filepath': checklist_filepath, 'error_code': 9001}
+                )
         finally:
-            logging.debug(f"Released lock for checklist file: {checklist_filepath}")
+            logging.debug(
+                f"Released lock for checklist file: {checklist_filepath}"
+                )
 
 
 # --- URL Processing Function ---
 
 
-def process_single_url(url, website_name, output_dir, checklist_filepath, checklist_lock):
-    """Fetches, processes, and saves content for a single URL. Updates checklist on success."""
+def process_single_url(
+        url,
+        website_name,
+        output_dir,
+        checklist_filepath,
+        checklist_lock
+        ):
+    """Fetches, processes, and saves content for a single URL. 
+    Updates checklist on success."""
     logging.info(f"Processing URL: {url}")
 
     success = False  # Track overall success for this URL
@@ -270,70 +327,102 @@ def process_single_url(url, website_name, output_dir, checklist_filepath, checkl
                 continue  # Skip images without src
 
             absolute_src = urljoin(url, original_src)
-            alt_text = img_tag.get('alt', 'image')  # Default alt text if missing
+            # Default alt text if missing
+            alt_text = img_tag.get('alt', 'image')
             placeholder = f"__IMAGE_PLACEHOLDER_{absolute_src}__"
-            markdown_output = f"![{alt_text}]({absolute_src})" # Default to standard markdown
+            # Default to standard markdown
+            markdown_output = f"![{alt_text}]({absolute_src})"
 
             # Check if it's an SVG
             if absolute_src.lower().endswith(".svg"):
                 logging.info(f"Identified potential SVG: {absolute_src}")
                 # Attempt to fetch SVG content
-                svg_content = fetch_url_content(absolute_src) # Re-use fetch function
+                # Re-use fetch function
+                svg_content = fetch_url_content(absolute_src)
                 if svg_content:
                     # TODO: Implement custom SVG to Mermaid text conversion here.
                     # This likely involves parsing svg_content using libraries
                     # like svgpathtools or xml.etree.ElementTree to understand
                     # the structure and generate Mermaid syntax.
                     # For now, we assume conversion fails and use the fallback.
-                    conversion_successful = False # Placeholder variable
-                    mermaid_text = "" # Placeholder variable
+                    conversion_successful = False  # Placeholder variable
+                    mermaid_text = ""  # Placeholder variable
 
                     if conversion_successful:
                         # Future: Use the converted Mermaid text
                         # markdown_output = f"```mermaid\n{mermaid_text}\n```"
-                        # logging.info(f"Successfully converted SVG to Mermaid: {absolute_src}")
-                        pass # Keep placeholder logic for now
+                        # logging.info(f"Successfully converted SVG to
+                        #  Mermaid: {absolute_src}")
+                        pass  # Keep placeholder logic for now
                     else:
                         # Fallback: Use standard markdown image tag (already default)
-                        logging.warning(f"SVG to Mermaid conversion failed or not implemented for: {absolute_src}. Using fallback.")
+                        logging.warning(
+                            f"SVG to Mermaid conversion failed or not implemented for: {absolute_src}. Using fallback."
+                            )
                 else:
-                    logging.error(f"Failed to fetch SVG content for: {absolute_src}. Using fallback.")
-                    # Fallback: Use standard markdown image tag (already default)
+                    logging.error(
+                        f"Failed to fetch SVG content for: {absolute_src}. Using fallback."
+                        )
+                    # Fallback: Use standard markdown image tag
+                    #  (already default)
 
-            # Store the final markdown representation (either standard tag or future Mermaid)
+            # Store the final markdown representation (either standard tag or
+            #  future Mermaid)
             image_placeholders[placeholder] = markdown_output
 
             # Replace the img tag in the soup with the placeholder text
             img_tag.replace_with(placeholder)
-            logging.debug(f"Replaced img tag {original_src} with placeholder {placeholder}")
+            logging.debug(
+                f"Replaced img tag {original_src} with placeholder {placeholder}"
+                )
 
         # --- Phase 2, Step 1: Convert HTML Body to Markdown ---
-        # Using markdownify to preserve structure (headings, lists, code blocks etc.)
-        # Link and image tag replacements were done *before* this step.
+        # Using markdownify to preserve structure (headings, lists,
+        #  code blocks etc.) Link and image tag replacements were
+        #  done *before* this step.
         markdown_content = "No content found."  # Default
         html_to_convert = ""
         if soup.body:
             html_to_convert = str(soup.body)
         else:
-            logging.warning(f"No <body> tag found in {url}. Attempting conversion from root.")
-            html_to_convert = str(soup) # Fallback
+            logging.warning(
+                f"No <body> tag found in {url}. Attempting conversion from root."
+                )
+            html_to_convert = str(soup)  # Fallback
 
         if html_to_convert:
             try:
-                markdown_content = markdownify(html_to_convert, heading_style="ATX")
-                logging.info(f"Successfully converted HTML body to Markdown for {url}")
+                markdown_content = markdownify(
+                    html_to_convert,
+                    heading_style="ATX"
+                    )
+                logging.info(
+                    f"Successfully converted HTML body to Markdown for {url}"
+                    )
             except Exception as md_err:
-                logging.error(f"Markdownify conversion failed for {url}: {md_err}", exc_info=True, extra={'url': url, 'error_code': 7001})
-                markdown_content = "[Markdown conversion failed]"  # Indicate failure in output
+                logging.error(
+                    f"Markdownify conversion failed for {url}: {md_err}",
+                    exc_info=True,
+                    extra={'url': url, 'error_code': 7001}
+                    )
+                # Indicate failure in output
+                markdown_content = "[Markdown conversion failed]"
         else:
-            logging.error(f"No HTML content found to convert for {url}", extra={'url': url, 'error_code': 7002})
-
+            logging.error(
+                f"No HTML content found to convert for {url}",
+                extra={'url': url, 'error_code': 7002}
+                )
 
         # --- Post-processing: Replace Image Placeholders ---
         processed_content = markdown_content
         for placeholder, markdown_image_tag in image_placeholders.items():
-            processed_content = processed_content.replace(placeholder, markdown_image_tag)
-            logging.debug(f"Replaced placeholder {placeholder} with Markdown image tag.")
+            processed_content = processed_content.replace(
+                placeholder,
+                markdown_image_tag
+                )
+            logging.debug(
+                f"Replaced placeholder {placeholder} with Markdown image tag."
+                )
 
         # --- Prepare Final Output ---
         processed_content += f"\n\n---\n*Source URL: {url}*"
@@ -351,12 +440,19 @@ def process_single_url(url, website_name, output_dir, checklist_filepath, checkl
             logging.info(f"Successfully saved: {filepath}")
             success = True  # Mark as successful *before* checklist update
         except IOError as e:
-            logging.error(f"Error writing file {filepath}: {e}", extra={'filepath': filepath, 'error_code': 5002})
+            logging.error(
+                f"Error writing file {filepath}: {e}",
+                extra={'filepath': filepath, 'error_code': 5002}
+                )
             success = False  # Indicate failure
 
     except Exception as e:
-        # Catching generic Exception is broad, consider more specific ones later
-        logging.error(f"Error processing HTML for {url}: {e}", exc_info=True, extra={'url': url, 'error_code': 9001}) # General processing error
+        # Catching generic Exception is broad,
+        #  consider more specific ones later
+        logging.error(
+            f"Error processing HTML for {url}: {e}",
+            exc_info=True,
+            extra={'url': url, 'error_code': 9001})  # General processing error
         success = False  # Indicate failure
 
     # --- Update Checklist (only if processing and saving succeeded) ---
@@ -369,33 +465,64 @@ def process_single_url(url, website_name, output_dir, checklist_filepath, checkl
 # --- Worker Function ---
 
 
-def worker(url_queue, website_name, output_dir, checklist_filepath, checklist_lock, pbar):
-    """Worker thread function to process URLs from the queue and update progress bar."""
-    while True: # Keep running until queue is empty
+def worker(
+        url_queue,
+        website_name,
+        output_dir,
+        checklist_filepath,
+        checklist_lock,
+        pbar
+        ):
+    """
+    Worker thread function to process URLs from the queue and update progress
+    bar.
+    """
+    while True:  # Keep running until queue is empty
         try:
             url = url_queue.get_nowait()  # Get URL without blocking
-            logging.debug(f"Worker {threading.current_thread().name} processing {url}")
+            logging.debug(
+                f"Worker {threading.current_thread().name} processing {url}"
+                )
             try:
-                process_single_url(url, website_name, output_dir, checklist_filepath, checklist_lock)
+                process_single_url(
+                    url,
+                    website_name,
+                    output_dir,
+                    checklist_filepath,
+                    checklist_lock
+                    )
             except Exception as process_err:
-                # Log errors during processing within the worker to avoid losing them
-                logging.error(f"Error in process_single_url for {url} within worker {threading.current_thread().name}: {process_err}", exc_info=True, extra={'url': url, 'error_code': 9001})
+                # Log errors during processing within the worker to avoid
+                #  losing them
+                logging.error(
+                    f"Error in process_single_url for {url} within worker {threading.current_thread().name}: {process_err}",
+                    exc_info=True,
+                    extra={'url': url, 'error_code': 9001}
+                    )
             finally:
-                 # Ensure task_done is called regardless of success/failure in process_single_url
+                # Ensure task_done is called regardless of success/failure in
+                #  process_single_url
                 url_queue.task_done()  # Signal that this task is complete
-                pbar.update(1) # Update progress bar for this completed task
+                pbar.update(1)  # Update progress bar for this completed task
             # Optional: Add a small delay to avoid overwhelming servers
             # time.sleep(0.1)
         except queue.Empty:
             # Queue is empty, thread can exit
-            logging.debug(f"Worker {threading.current_thread().name} found queue empty.")
+            logging.debug(
+                f"Worker {threading.current_thread().name} found queue empty."
+                )
             break
         except Exception as e:
             # Log unexpected errors in the worker loop itself
-            logging.error(f"Unexpected error in worker {threading.current_thread().name}: {e}", exc_info=True)
-            # We might still need task_done here if the error happened before getting an item
-            # However, the current logic gets item first, so this might not be reachable easily.
-            # If an error occurs *after* getting an item but before task_done, the finally block handles it.
+            logging.error(
+                f"Unexpected error in worker {threading.current_thread().name}: {e}",
+                exc_info=True
+                )
+            # We might still need task_done here if the error happened before
+            # getting an item. However, the current logic gets item first, so
+            # this might not be reachable easily. If an error occurs *after*
+            # getting an item but before task_done, the finally block handles
+            # it.
 
 
 # --- Main Execution ---
@@ -412,22 +539,34 @@ def main():
     markdown_content = fetch_url_content(args.tree_url)
     if not markdown_content:
         # fetch_url_content already logged the error with code
-        logging.critical("Failed to fetch markdown tree content. Exiting.", extra={'url': args.tree_url, 'error_code': 6001})
+        logging.critical(
+            "Failed to fetch markdown tree content. Exiting.",
+            extra={'url': args.tree_url, 'error_code': 6001}
+            )
         sys.exit(1)
 
     # 2. Extract URLs from the tree
     target_urls = extract_urls_from_tree(markdown_content)
     if not target_urls:
-        logging.critical("No URLs extracted from the markdown tree. Exiting.", extra={'error_code': 6003})
+        logging.critical(
+            "No URLs extracted from the markdown tree. Exiting.",
+            extra={'error_code': 6003}
+            )
         sys.exit(1)
 
     # 3. Validate extracted URLs (optional step shown here)
     valid_urls = [url for url in target_urls if validate_url(url)]
     invalid_count = len(target_urls) - len(valid_urls)
     if invalid_count > 0:
-        logging.warning(f"Found {invalid_count} invalid URL formats in the input tree.", extra={'invalid_count': invalid_count})
+        logging.warning(
+            f"Found {invalid_count} invalid URL formats in the input tree.",
+            extra={'invalid_count': invalid_count}
+            )
     if not valid_urls:
-        logging.critical("No valid URLs found after validation. Exiting.", extra={'error_code': 6003})
+        logging.critical(
+            "No valid URLs found after validation. Exiting.",
+            extra={'error_code': 6003}
+            )
         sys.exit(1)
 
     # 4. Derive website name from the *first valid target URL*
@@ -436,10 +575,14 @@ def main():
 
     # 5. Generate the checklist file in the root directory
     checklist_filename = f"{website_name}_scrape_checklist.md"
-    checklist_filepath = os.path.join(".", checklist_filename)  # Get full path for locking
+    # Get full path for locking
+    checklist_filepath = os.path.join(".", checklist_filename)
     if not generate_checklist_file(website_name, valid_urls):
         # generate_checklist_file logs the specific error
-        logging.critical("Failed to generate checklist file. Exiting.", extra={'error_code': 5002})
+        logging.critical(
+            "Failed to generate checklist file. Exiting.",
+            extra={'error_code': 5002}
+            )
         sys.exit(1)
 
     # 6. Create the output directory for markdown files
@@ -448,7 +591,10 @@ def main():
         os.makedirs(output_dir, exist_ok=True)
         logging.info(f"Ensured output directory exists: {output_dir}")
     except OSError as e:
-        logging.critical(f"Failed to create output directory {output_dir}: {e}. Exiting.", extra={'directory': output_dir, 'error_code': 5002})
+        logging.critical(
+            f"Failed to create output directory {output_dir}: {e}. Exiting.",
+            extra={'directory': output_dir, 'error_code': 5002}
+            )
         sys.exit(1)
 
     logging.info("Setup complete. Starting concurrent URL processing.")
@@ -474,9 +620,17 @@ def main():
         thread = threading.Thread(
             target=worker,
             # Pass the progress bar instance to the worker
-            args=(url_queue, website_name, output_dir, checklist_filepath, checklist_lock, pbar),
+            args=(
+                url_queue,
+                website_name,
+                output_dir,
+                checklist_filepath,
+                checklist_lock,
+                pbar
+                ),
             name=f"Worker-{i+1}",
-            daemon=True  # Allows main thread to exit even if workers are blocked
+            # Allows main thread to exit even if workers are blocked
+            daemon=True
         )
         threads.append(thread)
         thread.start()
@@ -484,12 +638,16 @@ def main():
 
     # Wait for all tasks in the queue to be processed
     logging.info("Waiting for all URLs to be processed...")
-    url_queue.join()  # Blocks until all items are processed (task_done called for each item)
+    # Blocks until all items are processed (task_done called for each item)
+    url_queue.join()
 
     # Close the progress bar
     pbar.close()
-    logging.info("All URLs processed. Concurrency and progress bar phase complete.")
-    # Note: Since threads are daemons, they will exit automatically when the main thread finishes.
+    logging.info(
+        "All URLs processed. Concurrency and progress bar phase complete."
+        )
+    # Note: Since threads are daemons, they will exit automatically when the
+    #  main thread finishes.
     # If non-daemon threads were used, we would need:
     # for thread in threads:
     #     thread.join()
