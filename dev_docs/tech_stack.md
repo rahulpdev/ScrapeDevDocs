@@ -95,6 +95,7 @@
     - Markdown parsing
     - URL extraction
     - Content crawling (network, parsing errors)
+    - SVG image processing
     - File I/O
 
 ## Development Tooling

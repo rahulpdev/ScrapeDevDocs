@@ -52,8 +52,6 @@
 
 ## Next Steps
 
-## Next Steps
-
 ### Function 2: Content Extractor Implementation
 
 1.  **Input Processing:**
