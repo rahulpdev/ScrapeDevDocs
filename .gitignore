@@ -1,3 +1,14 @@
+# Python virtual environment
+.venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Auto-generated scrape files
+*_scrape_checklist.md
+*_docs/
+
 # Cline files and folders
 .clinerules/
 .clineignore
