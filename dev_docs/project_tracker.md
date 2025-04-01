@@ -25,69 +25,100 @@
 - [x] Implemented SVG processing framework
 - [x] Refined logging for Function 2 specifics (JSON format, rotation, levels, severity, context, taxonomy)
 
-## Implementation Phase 1 Tasks
+## Implementation Phase 1 Tasks (Completed)
 
 ### 1. Core Script Structure & Input Processing
 
 - **Setup:**
-  - [ ] Create main Python script (`scrape_docs.py`)
-  - [ ] Initialize basic structured JSON logging
-  - [ ] Set up `argparse` for input URL
+  - [x] Create main Python script (`scrape_docs.py`)
+  - [x] Initialize basic structured JSON logging
+  - [x] Set up `argparse` for input URL
 - **Input Fetching & Parsing:**
-  - [ ] Fetch content from input URL (`requests`, error handling)
-  - [ ] Parse markdown tree (`markdown` library, error handling)
-  - [ ] Validate extracted URLs
+  - [x] Fetch content from input URL (`requests`, error handling)
+  - [x] Parse markdown tree (regex implementation, error handling)
+  - [x] Validate extracted URLs
 - **Checklist Generation:**
-  - [ ] Derive `<website name>` from input URL
-  - [ ] Create/overwrite `<website name>_scrape_checklist.md` (error handling)
+  - [x] Derive `<website name>` from first target URL
+  - [x] Create/overwrite `<website name>_scrape_checklist.md` (error handling)
 
 ### 2. Foundational Content Extraction (Single URL)
 
 - **Crawling & Parsing:**
-  - [ ] Fetch HTML for a sample URL
-  - [ ] Parse HTML (BeautifulSoup)
+  - [x] Fetch HTML for a sample URL
+  - [x] Parse HTML (BeautifulSoup)
 - **Content Processing:**
-  - [ ] Extract/preserve heading hierarchy
-  - [ ] Implement basic relative-to-absolute URL conversion (links)
-  - [ ] Preserve external links
-  - [ ] Add source URL to content end
+  - [ ] Extract/preserve heading hierarchy (Placeholder implemented, needs proper logic)
+  - [x] Implement basic relative-to-absolute URL conversion (links)
+  - [ ] Preserve external links (Covered by link conversion for now)
+  - [x] Add source URL to content end
 - **Output:**
-  - [ ] Save output to `<website name>_docs` folder (ensure folder creation)
+  - [x] Save output to `<website name>_docs` folder (ensure folder creation)
 
-## Future Implementation Phases (Post Phase 1)
+## Implementation Phase 2 Tasks (Completed)
 
+- **Full HTML-to-Markdown Conversion:**
+  - [x] Integrate `markdownify` library.
+  - [x] Preserve heading hierarchy (via `markdownify`).
+  - [x] Preserve list structures (via `markdownify`).
+  - [x] Preserve code blocks (via `markdownify`).
+  - [x] Handle basic formatting (via `markdownify`).
+  - [x] Ensure relative links converted to absolute (handled before conversion).
+  - [ ] Preserve "Last Updated" data (Requires specific identification logic - Deferred).
+  - [x] Do NOT remove content between section headers (Handled by converting `soup.body`).
 - **Concurrency Implementation:**
-  - [ ] Integrate thread-per-URL processing
-  - [ ] Implement write queue for atomic file writes
-  - [ ] Implement file locking (`fcntl`) for checklist/log files
-  - [ ] Test concurrency thoroughly
-- **Full Image Processing:**
-  - [ ] Integrate SVG fetching
-  - [ ] Integrate custom SVG parser
-  - [ ] Integrate Mermaid CLI conversion
-  - [ ] Implement fallback for SVG conversion failure (preserve original ref)
-  - [ ] Implement handling for non-SVG images (preserve original ref)
-- **Full Content Extraction & Conversion:**
-  - [ ] Integrate core crawling logic with concurrency
-  - [ ] Ensure all content rules are met (no content removal, last updated data)
-  - [ ] Implement checklist update on success
+  - [x] Integrate thread-per-URL processing (`threading`, `queue`).
+  - [ ] Implement write queue for atomic file writes (Simplified: Direct write used for now - Deferred).
+  - [x] Implement file locking (`threading.Lock`) for checklist updates.
+  - [ ] Test concurrency thoroughly (Deferred).
+- **Basic Image Handling (Non-SVG):**
+  - [x] Identify `<img>` tags.
+  - [x] Convert `src` to absolute URL.
+  - [x] Preserve `alt` text.
+  - [x] Represent image using Markdown syntax `![alt](src)`.
+  - [x] Explicitly do not download images.
+
+## Implementation Phase 3 Tasks (Completed)
+
+- **Full Image Processing (SVG Handling):**
+  - [x] Identify SVGs by extension.
+  - [x] Fetch SVG content using `fetch_url_content`.
+  - [ ] Attempt Mermaid Conversion (Placeholder added, requires custom logic - Deferred).
+  - [x] Handle Conversion Output (Fallback to standard markdown implemented).
+  - [x] Placeholder Refinement (Using unique placeholders).
+- **Refinements & Robustness:**
+  - [ ] Implement proper write queue for atomic file writes (Deferred).
+  - [x] Implement detailed structured JSON logging (Basic structure with `python-json-logger` added).
+  - [x] Implement retry logic for `fetch_url_content` (Using `requests.Session` and `Retry`).
+  - [x] Implement specific error handling using `error_codes.md` (Basic codes integrated).
+  - [ ] Preserve "Last Updated" data (if identifiable) (Deferred).
+  - [ ] Test concurrency thoroughly (Deferred).
 - **User Feedback:**
-  - [ ] Implement terminal progress bar
-- **Error Handling & Logging:**
-  - [ ] Ensure robust error handling covers all stages
-  - [ ] Integrate detailed structured logging throughout
-- **Testing:**
-  - [ ] Implement Pytest unit/integration tests
-  - [ ] Implement SVG-specific tests
-  - [ ] Set up code quality tools (Black, Flake8, Mypy)
+  - [x] Implement terminal progress bar (Using `tqdm`).
+
+## Future Implementation Phases (Post Phase 3)
+
+- **SVG Conversion Implementation:**
+  - [ ] Implement custom SVG to Mermaid text conversion logic.
+  - [ ] Integrate the conversion logic into `process_single_url`.
+- **Testing & Quality Assurance:**
+  - [ ] Implement Pytest unit/integration tests.
+  - [ ] Implement SVG-specific tests.
+  - [ ] Set up and run code quality tools (Black, Flake8, Mypy).
+- **Final Refinements:**
+  - [ ] Implement proper write queue for atomic file writes.
+  - [ ] Enhance structured logging with more detail and context.
+  - [ ] Implement robust validation for extracted URLs.
+  - [ ] Preserve "Last Updated" data (if feasible).
+  - [ ] Test concurrency thoroughly.
+  - [ ] Add remaining command-line arguments (e.g., output dir override).
 
 ## Documentation Versions
 
-| Document            | Version | Last Updated |
-| ------------------- | ------- | ------------ |
-| project_brief.md    | v1.3    | 2025-03-31   |
-| codebase_summary.md | v1.7    | 2025-03-31   |
-| tech_stack.md       | v1.12   | 2025-04-01   |
-| project_tracker.md  | v1.20   | 2025-04-01   |
-| current_task.md     | v1.12   | 2025-04-01   |
-| error_codes.md      | v1.0    | 2025-03-31   |
+| Document            | Version | Last Updated | Notes                   |
+| ------------------- | ------- | ------------ | ----------------------- |
+| project_brief.md    | v1.4    | 2025-04-01   | Added input format req  |
+| codebase_summary.md | v1.8    | 2025-04-01   | Updated input proc desc |
+| tech_stack.md       | v1.13   | 2025-04-01   | Removed markdown lib    |
+| project_tracker.md  | v1.24   | 2025-04-01   | Incremented version     |
+| current_task.md     | v1.14   | 2025-04-01   | Updated post Phase 3    |
+| error_codes.md      | v1.0    | 2025-03-31   |                         |

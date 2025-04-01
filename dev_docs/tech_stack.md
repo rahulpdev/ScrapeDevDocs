@@ -19,13 +19,13 @@
      - Simplified HTTP operations
      - Session persistence
      - Automatic retry logic
-   - urllib3 (v2.0.7)
+   - urllib3 (v2.0.7) # Dependency of requests
    - Connection pooling
    - SSL verification
 
-- `markdown` library (Python standard)
-  - Parsing the input markdown file containing the URL tree structure.
-  - Extracting URLs from the tree.
+- Standard Python string methods (`split()`, `strip()`) and `urllib.parse`
+  - Used for parsing the specific input tree file format (`[TREE_PREFIX][SPACE][URL]`).
+  - Extracting URLs line by line.
 
 3. **URL Validation**
 
@@ -81,8 +81,8 @@
   - Circuit breaker pattern (optional, if needed for external calls)
   - Robust error handling for:
     - Input URL fetching/validation
-    - Markdown parsing (`markdown` library errors)
-    - URL extraction
+    - Input file line parsing errors
+    - URL extraction/validation errors
     - Content crawling (network, HTML parsing errors via BeautifulSoup)
     - SVG image processing (fetching, custom parser errors, Mermaid CLI errors)
     - File I/O

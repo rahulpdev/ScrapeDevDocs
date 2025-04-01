@@ -4,9 +4,9 @@
 
 1. **Input Processor (Function 2)**
 
-   - Accepts a URL pointing to a markdown file containing a tree structure of URLs.
+   - Accepts a URL pointing to a raw text file (e.g., markdown) containing a tree structure of URLs.
    - Validates the input URL.
-   - Parses the markdown file to extract the list of URLs to be crawled.
+   - Parses the file content line by line, expecting the format `[TREE_PREFIX][SPACE][URL]` (as defined in `project_brief.md`) to extract the list of URLs to be crawled.
 
 2. **Content Extractor (Function 2)**
 

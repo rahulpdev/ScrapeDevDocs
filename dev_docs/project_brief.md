@@ -40,7 +40,13 @@ To crawl online developer documentation specified in a tree-structure markdown f
           - Original content structure
           - Converted mermaid diagrams (where applicable)
           - Source URL reference
-      - Accept as a terminal input (with input validation) a URL to a GitHub repository raw file (or similar raw text source) that contains a tree structure markdown diagram (like the example provided: `https://raw.githubusercontent.com/rahulpdev/WebsiteNavbarMap/refs/heads/main/output_maps/developers_home_assistant_io_nav_map.md`). Each branch of the tree represents a URL to be crawled.
+      - Accept as a terminal input (with input validation) a URL to a GitHub repository raw file (or similar raw text source).
+      - **Input File Format Requirement:** The file at the URL **must** contain a tree structure where each line representing a URL to crawl follows the exact format: `[TREE_PREFIX][SPACE][URL]`.
+        - `[TREE_PREFIX]` can be any non-whitespace characters (e.g., `├──`, `└──`, `│  `).
+        - `[SPACE]` is one or more whitespace characters.
+        - `[URL]` is the full, valid HTTP/HTTPS URL to be crawled.
+        - Example valid line: `├── https://www.hacs.xyz/docs/publish/start/`
+        - Lines not matching this format will be ignored.
       - After accepting a valid terminal input, create/overwrite the content of `<website name>_scrape_checklist.md` with a checklist of the URLs extracted from the tree structure diagram.
       - During execution, display a progress bar in the terminal indicating the number of URLs successfully processed out of the total (e.g., "Processed Y of X URLs").
 

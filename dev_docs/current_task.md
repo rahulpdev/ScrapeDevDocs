@@ -9,8 +9,8 @@
   - project_brief.md: v1.3
   - codebase_summary.md: v1.7
   - tech_stack.md: v1.10
-  - project_tracker.md: v1.17
-  - current_task.md: v1.10
+  - project_tracker.md: v1.23 # Updated version
+  - current_task.md: v1.13 # Previous version
   - error_codes.md: v1.0
 
 ## Completed Work
@@ -50,42 +50,46 @@
      - Automatic resource cleanup
      - No shared state between threads/URLs
 
-## Current Focus: Transition to Implementation
+## Current Focus: Implementation Phase 4
 
-The design and documentation phase is complete. The project is now transitioning to the implementation phase, focusing on building Function 2 (Content Extractor).
+**Phase 3 (SVG Identification, Robustness Basics, Progress Bar) is complete.** The script now identifies potential SVGs (though conversion is deferred), includes basic structured logging with error codes, implements retry logic for fetching, and displays a progress bar.
 
-## Next Steps: Implementation Phase 1
+The focus now shifts to implementing the core SVG-to-Mermaid conversion, adding comprehensive testing, and performing final refinements.
 
-### 1. Core Script Structure & Input Processing
+## Next Steps: Implementation Phase 4
 
-- **Setup:**
-  - Create the main Python script file (e.g., `scrape_docs.py`).
-  - Initialize basic logging configuration using the structured JSON format defined in `tech_stack.md` and `error_codes.md`.
-  - Set up basic argument parsing (using `argparse`) to accept the input markdown tree URL.
-- **Input Fetching & Parsing:**
-  - Implement logic to fetch content from the provided URL using `requests`. Include error handling (network errors, invalid URL).
-  - Implement logic to parse the fetched markdown content using the `markdown` library to extract the list of target URLs. Include error handling (parsing errors).
-  - Implement validation for extracted URLs (basic format check).
-- **Checklist Generation:**
-  - Implement logic to derive `<website name>` from the input URL (e.g., based on domain).
-  - Create/overwrite the `<website name>_scrape_checklist.md` file with the extracted URLs as a markdown checklist. Include error handling (file I/O).
+### 1. SVG Conversion Implementation
 
-### 2. Foundational Content Extraction (Single URL)
-
-- **Target:** Implement the basic crawl and markdown generation for a _single_ URL first, without concurrency or complex image handling initially.
+- **Target:** Implement the custom logic to parse fetched SVG content and convert it into Mermaid diagram text.
 - **Steps:**
-  - Fetch HTML content for a sample target URL.
-  - Parse HTML using BeautifulSoup.
-  - Extract and preserve heading hierarchy.
-  - Implement basic relative-to-absolute URL conversion for links.
-  - Preserve external links.
-  - Add source URL to the end of the content.
-  - Save the output to a corresponding file in the `<website name>_docs` folder (ensure folder creation).
+  - **Choose Parsing Library:** Select and integrate a suitable SVG parsing library (e.g., `svgpathtools`, `xml.etree.ElementTree`).
+  - **Develop Conversion Logic:** Analyze common SVG structures (nodes, edges, text) found in target documentation diagrams and write Python functions to translate these into corresponding Mermaid syntax (flowchart, sequence diagram, etc., as appropriate).
+  - **Integrate:** Replace the `TODO` placeholder in `process_single_url` with the call to the new conversion function. Handle success and failure, updating the `markdown_output` variable accordingly (either with ` ```mermaid ... ``` ` block or the fallback image tag).
+  - **Refine Fallback:** Ensure the fallback mechanism (using the standard `![alt](src)` tag) works reliably if conversion fails or is not applicable.
 
-### Documentation Finalization (Post Phase 1)
+### 2. Testing & Quality Assurance
 
-1.  Update `project_tracker.md` to mark completed Phase 1 tasks.
-2.  Increment version numbers for all modified Memory Bank documents upon task completion or significant changes.
-3.  Update this `current_task.md` file (v1.12) with the next implementation focus (e.g., Concurrency, Full Image Processing) and new version number after completing Phase 1.
+- **Target:** Implement unit and integration tests to ensure script correctness and robustness.
+- **Steps:**
+  - **Setup Pytest:** Configure Pytest in the project.
+  - **Unit Tests:** Write unit tests for key functions like `generate_safe_filename`, `extract_urls_from_tree`, `get_website_name`, and potentially the core SVG parsing/conversion logic once developed. Use mocking (`unittest.mock`) for external dependencies like `requests`.
+  - **Integration Tests:** Create tests that run the script against sample local HTML/SVG files or mocked HTTP responses to verify the end-to-end workflow (excluding full concurrency testing initially).
+  - **Code Quality Tools:** Set up and run Black, Flake8, and Mypy as defined in `tech_stack.md`. Address reported issues (respecting `.clinerules`).
 
-_(Previous "Next Steps" have been restructured into the implementation plan)_
+### 3. Final Refinements
+
+- **Target:** Address remaining TODOs and enhance overall quality.
+- **Steps:**
+  - **Write Queue:** Implement the proper write queue with a dedicated writer thread to ensure atomic file writes, replacing the current direct write in `process_single_url`.
+  - **Logging Enhancement:** Improve structured logging by adding more contextual details (e.g., specific element causing SVG parse error) and ensuring all error paths log appropriate codes.
+  - **"Last Updated" Data:** Revisit the possibility of extracting "Last Updated" data if feasible patterns are identified.
+  - **Concurrency Testing:** Design and perform tests specifically targeting potential race conditions or deadlocks in the concurrent processing and checklist updates (this can be complex).
+  - **CLI Arguments:** Add any remaining necessary command-line arguments (e.g., `--output-dir`, `--log-level`, `--num-workers`).
+  - **README/CHANGELOG:** Update `README.md` and `CHANGELOG.md` as per `.clinerules/04_readme.md`.
+  - **.gitignore/.clineignore:** Ensure these files are up-to-date as per `.clinerules/03_gitrules.md` and `.clinerules/05_clinerules.md`.
+
+### Documentation Finalization (Post Phase 4)
+
+1.  Update `project_tracker.md` to mark completed Phase 4 tasks.
+2.  Increment version numbers for all modified Memory Bank documents.
+3.  Update this `current_task.md` file (v1.15) to reflect project completion or any remaining minor tasks.
