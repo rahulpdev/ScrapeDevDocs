@@ -87,7 +87,7 @@
 | ------------------- | ------- | ------------ |
 | project_brief.md    | v1.3    | 2025-03-31   |
 | codebase_summary.md | v1.7    | 2025-03-31   |
-| tech_stack.md       | v1.11   | 2025-04-01   |
-| project_tracker.md  | v1.19   | 2025-04-01   |
+| tech_stack.md       | v1.12   | 2025-04-01   |
+| project_tracker.md  | v1.20   | 2025-04-01   |
 | current_task.md     | v1.12   | 2025-04-01   |
 | error_codes.md      | v1.0    | 2025-03-31   |

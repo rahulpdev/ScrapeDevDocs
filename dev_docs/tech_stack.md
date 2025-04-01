@@ -150,3 +150,7 @@
      - Manual review for complex diagrams
      - Alternative text descriptions
      - Original SVG preservation option
+5. **Code Modularity:**
+   - **Preference:** Favor small, focused Python modules/files over a single large script.
+   - **Rationale:** Improves maintainability, testability, and readability. Allows for clearer separation of concerns (e.g., input parsing, HTML processing, image handling, file writing).
+   - **Impact:** Requires careful interface design between modules but leads to a more robust and scalable codebase.
