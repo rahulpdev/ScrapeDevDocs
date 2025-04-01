@@ -7,8 +7,8 @@
 - Decouple services using events.
 - Use descriptive names for files, functions, and variables.
 - Adhere to the style guide and idioms of the applicable programming language.
-- Ignore line length code actions.
-- Ignore spacing code actions.
+- Ignore all Flake8 E501 errors.
+- Ignore all Flake8 W291, W293 and W391 warnings.
 
 ## Code documentation
 
