@@ -9,8 +9,8 @@
   - project_brief.md: v1.3
   - codebase_summary.md: v1.7
   - tech_stack.md: v1.10
-  - project_tracker.md: v1.23 # Updated version
-  - current_task.md: v1.13 # Previous version
+  - project_tracker.md: v1.25 # Updated version
+  - current_task.md: v1.14 # Previous version
   - error_codes.md: v1.0
 
 ## Completed Work
@@ -88,8 +88,23 @@ The focus now shifts to implementing the core SVG-to-Mermaid conversion, adding 
   - **README/CHANGELOG:** Update `README.md` and `CHANGELOG.md` as per `.clinerules/04_readme.md`.
   - **.gitignore/.clineignore:** Ensure these files are up-to-date as per `.clinerules/03_gitrules.md` and `.clinerules/05_clinerules.md`.
 
+### Refactoring (Completed)
+
+1.  **Code Changes:** Modified `scrape_docs.py` to:
+    - Create a root `output_docs/` directory.
+    - Determine a base name from the first URL's H1 tag (or fallback to domain).
+    - Create checklist files (`<base_name>_scrape_checklist.md`) within `output_docs/`.
+    - Create documentation folders (`<base_name>_docs/`) within `output_docs/`.
+    - Save generated markdown files into the corresponding `<base_name>_docs/` folder.
+2.  **Documentation Updates:**
+    - Updated `project_brief.md` (v1.5) with new output structure and `.gitignore` rule.
+    - Updated `codebase_summary.md` (v1.9) with new output structure and data flow diagram.
+    - Updated `.gitignore` to ignore `output_docs/`.
+    - Updated `project_tracker.md` (v1.25) to mark refactoring complete and update versions.
+    - Updated this `current_task.md` file (v1.15).
+
 ### Documentation Finalization (Post Phase 4)
 
 1.  Update `project_tracker.md` to mark completed Phase 4 tasks.
 2.  Increment version numbers for all modified Memory Bank documents.
-3.  Update this `current_task.md` file (v1.15) to reflect project completion or any remaining minor tasks.
+3.  Update this `current_task.md` file (v1.16) to reflect project completion or any remaining minor tasks.

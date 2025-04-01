@@ -10,9 +10,11 @@
 
 2. **Content Extractor (Function 2)**
 
-   - Creates per-site folders (e.g. `<website name>_docs/`) in the project root.
-   - Generates markdown files preserving structure for each crawled URL.
-   - Maintains `<website name>_scrape_checklist.md` trackers in the project root.
+   - Determines a base name, preferably from the H1 of the first URL, falling back to the domain name (e.g., `<h1>` or `<website_name>`).
+   - Creates a root output folder `output_docs/` if it doesn't exist.
+   - Creates site-specific subfolders within `output_docs/` (e.g., `output_docs/<base_name>_docs/`).
+   - Generates markdown files preserving structure for each crawled URL within the site-specific folder.
+   - Maintains site-specific checklist trackers within `output_docs/` (e.g., `output_docs/<base_name>_scrape_checklist.md`).
 
 3. **Image Processing**
 
@@ -38,11 +40,12 @@ flowchart LR
     B -->|Valid| C["Markdown Parser"]
     B -->|Errors| D["Error Log"]
     C --> E["URL List Extractor"]
-    E --> G["Content Extractor"]
-    G --> H["Site Folder (<website name>_docs/)"]
-    G --> I["Checklist (<website name>_scrape_checklist.md)"]
+    E --> F["Determine Base Name (H1/Domain)"]
+    F --> G["Content Extractor"]
+    G --> H["Site Folder (output_docs/<base_name>_docs/)"]
+    G --> I["Checklist (output_docs/<base_name>_scrape_checklist.md)"]
     G --> J["Write Queue"]
-    J -->|Atomic Write| K["Markdown Content Files"]
+    J -->|Atomic Write| K["Markdown Content Files (in Site Folder)"]
 
     subgraph Concurrency
         direction LR

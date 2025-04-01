@@ -94,6 +94,9 @@
   - [ ] Test concurrency thoroughly (Deferred).
 - **User Feedback:**
   - [x] Implement terminal progress bar (Using `tqdm`).
+- **Refactoring:**
+  - [x] Move output files (`*_scrape_checklist.md`, `*_docs/`) to `output_docs/` directory.
+  - [x] Rename output files/folders based on H1 tag (e.g., `<h1>_scrape_checklist.md`, `<h1>_docs/`).
 
 ## Future Implementation Phases (Post Phase 3)
 
@@ -114,11 +117,11 @@
 
 ## Documentation Versions
 
-| Document            | Version | Last Updated | Notes                   |
-| ------------------- | ------- | ------------ | ----------------------- |
-| project_brief.md    | v1.4    | 2025-04-01   | Added input format req  |
-| codebase_summary.md | v1.8    | 2025-04-01   | Updated input proc desc |
-| tech_stack.md       | v1.13   | 2025-04-01   | Removed markdown lib    |
-| project_tracker.md  | v1.24   | 2025-04-01   | Incremented version     |
-| current_task.md     | v1.14   | 2025-04-01   | Updated post Phase 3    |
-| error_codes.md      | v1.0    | 2025-03-31   |                         |
+| Document            | Version | Last Updated | Notes                                    |
+| ------------------- | ------- | ------------ | ---------------------------------------- |
+| project_brief.md    | v1.5    | 2025-04-01   | Updated output paths/naming & gitignore  |
+| codebase_summary.md | v1.9    | 2025-04-01   | Updated output paths/naming & data flow  |
+| tech_stack.md       | v1.13   | 2025-04-01   | Removed markdown lib                     |
+| project_tracker.md  | v1.25   | 2025-04-01   | Added refactoring task, updated versions |
+| current_task.md     | v1.14   | 2025-04-01   | Updated post Phase 3                     |
+| error_codes.md      | v1.0    | 2025-03-31   |                                          |

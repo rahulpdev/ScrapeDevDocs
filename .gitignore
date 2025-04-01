@@ -6,8 +6,7 @@ __pycache__/
 *.pyc
 
 # Auto-generated scrape files
-*_scrape_checklist.md
-*_docs/
+output_docs/
 
 # Cline files and folders
 .clinerules/

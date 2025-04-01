@@ -18,8 +18,7 @@ from bs4 import BeautifulSoup  # Added BeautifulSoup
 from markdownify import markdownify  # Added markdownify
 import threading  # Added threading
 import queue  # Added queue
-import time  # Added for potential sleep/backoff later
-from datetime import datetime # Added for milliseconds timestamp
+from datetime import datetime  # Added for milliseconds timestamp
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from pythonjsonlogger import jsonlogger  # Added for structured logging
@@ -60,6 +59,47 @@ def setup_logging():
 
 
 # --- Helper Functions ---
+
+
+def sanitize_for_filename(text):
+    """Removes or replaces characters unsafe for filenames/directory names."""
+    # Remove leading/trailing whitespace
+    text = text.strip()
+    # Replace spaces with underscores
+    text = text.replace(' ', '_')
+    # Remove characters that are problematic in filenames across OSes
+    text = re.sub(r'[<>:"/\\|?*&%\'!,;=\[\]{}()]+', '', text)
+    # Limit length to avoid issues (e.g., 100 chars)
+    return text[:100]
+
+
+def get_h1_from_url(url):
+    """Fetches a URL, extracts and sanitizes the first H1 tag content."""
+    logging.info(f"Attempting to fetch H1 from first URL: {url}")
+    html_content = fetch_url_content(url)
+    if not html_content:
+        logging.warning(f"Could not fetch content for H1 extraction from {url}. Falling back.")
+        return None  # Indicate failure
+
+    try:
+        soup = BeautifulSoup(html_content, 'lxml')
+        h1_tag = soup.find('h1')
+        if h1_tag and h1_tag.string:
+            # Explicitly cast to str to potentially help Pylance
+            h1_text = str(h1_tag.string).strip()
+            sanitized_h1 = sanitize_for_filename(h1_text)
+            if sanitized_h1:
+                logging.info(f"Extracted and sanitized H1: '{sanitized_h1}' from {url}")
+                return sanitized_h1
+            else:
+                logging.warning(f"H1 tag found but resulted in empty sanitized string from {url}. Falling back.")
+                return None
+        else:
+            logging.warning(f"No H1 tag found or H1 tag is empty in {url}. Falling back.")
+            return None
+    except Exception as e:
+        logging.error(f"Error parsing HTML for H1 extraction from {url}: {e}", exc_info=True, extra={'url': url, 'error_code': 7003})  # New error code for H1 parse fail
+        return None
 
 
 def parse_arguments():
@@ -181,8 +221,9 @@ def get_website_name(url):
         name = parsed_url.netloc.replace('.', '_')
         return name
     except Exception as e:
-        logging.error(f"Could not derive website name from URL {url}: {e}")
-        return "default_website"  # Fallback name
+        # Log the error with a specific code if needed
+        logging.error(f"Could not derive website name from URL {url}: {e}", extra={'url': url, 'error_code': 6004})  # New error code
+        return "fallback_domain_name"  # Fallback name
 
 
 def generate_safe_filename(url):
@@ -206,19 +247,18 @@ def generate_safe_filename(url):
     return filename
 
 
-def generate_checklist_file(website_name, urls):
-    """Creates or overwrites the checklist markdown file."""
-    filename = f"{website_name}_scrape_checklist.md"
-    logging.info(f"Generating checklist file: {filename}")
+def generate_checklist_file(base_name, filepath, urls):
+    """Creates or overwrites the checklist markdown file at the specified path."""
+    # filename is now derived externally and passed via filepath
+    logging.info(f"Generating checklist file: {filepath}")
     try:
-        # Ensure checklist file is in the root, not the docs folder
-        filepath = os.path.join(".", filename)  # Explicitly place in CWD
+        # Filepath now includes the output_docs directory
         with open(filepath, 'w', encoding='utf-8') as f:
-            f.write(f"# Scrape Checklist for {website_name}\n\n")
+            f.write(f"# Scrape Checklist for {base_name}\n\n")  # Use base_name for title
             f.write("URLs to process:\n\n")
             for url_item in urls:
                 f.write(f"- [ ] {url_item}\n")
-        logging.info(f"Successfully created checklist file: {filename}")
+        logging.info(f"Successfully created checklist file: {filepath}")  # Log full path
         return True
     except IOError as e:
         logging.error(
@@ -249,8 +289,8 @@ def update_checklist_file(checklist_filepath, url_to_check, lock):
             for i, line in enumerate(lines):
                 # Match the line specifically containing the URL
                 if line.strip() == f"- [ ] {url_to_check}":
-                    timestamp_ms = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3] # Format with milliseconds
-                    lines[i] = f"- [x] {url_to_check}  # Processed: {timestamp_ms}\n"
+                    timestamp_ms = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]  # Format with milliseconds
+                    lines[i] = f"- [x] {url_to_check}  # Processed: {timestamp_ms}\n"  # Fixed E261/E262
                     found = True
                     logging.info(
                         f"Marked URL as done in checklist: {url_to_check}"
@@ -293,12 +333,12 @@ def update_checklist_file(checklist_filepath, url_to_check, lock):
 
 def process_single_url(
         url,
-        website_name,
+        base_name,  # Keep for consistency, though not used directly here now
         output_dir,
         checklist_filepath,
         checklist_lock
         ):
-    """Fetches, processes, and saves content for a single URL. 
+    """Fetches, processes, and saves content for a single URL.
     Updates checklist on success."""
     logging.info(f"Processing URL: {url}")
 
@@ -346,7 +386,6 @@ def process_single_url(
                     # the structure and generate Mermaid syntax.
                     # For now, we assume conversion fails and use the fallback.
                     conversion_successful = False  # Placeholder variable
-                    mermaid_text = ""  # Placeholder variable
 
                     if conversion_successful:
                         # Future: Use the converted Mermaid text
@@ -467,7 +506,7 @@ def process_single_url(
 
 def worker(
         url_queue,
-        website_name,
+        base_name,  # Use base_name instead of website_name
         output_dir,
         checklist_filepath,
         checklist_lock,
@@ -486,7 +525,7 @@ def worker(
             try:
                 process_single_url(
                     url,
-                    website_name,
+                    base_name,  # Pass base_name
                     output_dir,
                     checklist_filepath,
                     checklist_lock
@@ -569,27 +608,42 @@ def main():
             )
         sys.exit(1)
 
-    # 4. Derive website name from the *first valid target URL*
-    website_name = get_website_name(valid_urls[0])
-    logging.info(f"Derived website name: {website_name}")
+    # 4. Get Base Name (H1 or Fallback) and Define Output Paths
+    base_name = get_h1_from_url(valid_urls[0])
+    if not base_name:
+        logging.warning("H1 extraction failed, falling back to domain name.")
+        base_name = get_website_name(valid_urls[0]) # Fallback
+    logging.info(f"Using base name for outputs: {base_name}")
 
-    # 5. Generate the checklist file in the root directory
-    checklist_filename = f"{website_name}_scrape_checklist.md"
-    # Get full path for locking
-    checklist_filepath = os.path.join(".", checklist_filename)
-    if not generate_checklist_file(website_name, valid_urls):
-        # generate_checklist_file logs the specific error
+    output_root_dir = "output_docs"
+    try:
+        os.makedirs(output_root_dir, exist_ok=True)
+        logging.info(f"Ensured root output directory exists: {output_root_dir}")
+    except OSError as e:
         logging.critical(
-            "Failed to generate checklist file. Exiting.",
-            extra={'error_code': 5002}
+            f"Failed to create root output directory {output_root_dir}: {e}. Exiting.",
+            extra={'directory': output_root_dir, 'error_code': 5002}
             )
         sys.exit(1)
 
-    # 6. Create the output directory for markdown files
-    output_dir = f"{website_name}_docs"
+    checklist_filename = f"{base_name}_scrape_checklist.md"
+    checklist_filepath = os.path.join(output_root_dir, checklist_filename)  # Path includes output_root_dir
+    output_dir = os.path.join(output_root_dir, f"{base_name}_docs")  # Path includes output_root_dir
+
+    # 5. Generate the checklist file in the new location
+    if not generate_checklist_file(base_name, checklist_filepath, valid_urls):  # Pass new args
+        # generate_checklist_file logs the specific error
+        logging.critical(
+            f"Failed to generate checklist file at {checklist_filepath}. Exiting.",
+            extra={'filepath': checklist_filepath, 'error_code': 5002}
+            )
+        sys.exit(1)
+
+    # 6. Create the specific output directory for markdown files
+    # output_dir is already defined above
     try:
-        os.makedirs(output_dir, exist_ok=True)
-        logging.info(f"Ensured output directory exists: {output_dir}")
+        os.makedirs(output_dir, exist_ok=True)  # Use the new output_dir path
+        logging.info(f"Ensured specific output directory exists: {output_dir}")
     except OSError as e:
         logging.critical(
             f"Failed to create output directory {output_dir}: {e}. Exiting.",
@@ -619,15 +673,15 @@ def main():
     for i in range(num_worker_threads):
         thread = threading.Thread(
             target=worker,
-            # Pass the progress bar instance to the worker
+                # Pass the progress bar instance to the worker
             args=(
                 url_queue,
-                website_name,
-                output_dir,
-                checklist_filepath,
+                base_name,  # Pass base_name
+                output_dir,  # Pass new output_dir
+                checklist_filepath,  # Pass new checklist_filepath
                 checklist_lock,
                 pbar
-                ),
+            ),  # Corrected indentation for E129 again
             name=f"Worker-{i+1}",
             # Allows main thread to exit even if workers are blocked
             daemon=True
