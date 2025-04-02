@@ -19,7 +19,12 @@ ScrapeDocs is a Python script designed to crawl online developer documentation s
 
 ## Badges
 
-_(Add relevant badges here, e.g., build status, coverage, license)_
+[![GitHub stars](https://img.shields.io/github/stars/rahulpdev/ScrapeDevDocs?style=social)](https://github.com/rahulpdev/ScrapeDevDocs/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/rahulpdev/ScrapeDevDocs?style=social)](https://github.com/rahulpdev/ScrapeDevDocs/network/members)
+[![GitHub last commit](https://img.shields.io/github/last-commit/rahulpdev/ScrapeDevDocs)](https://github.com/rahulpdev/ScrapeDevDocs/commits/main)
+
+<!-- Add license badge once license is chosen -->
+<!-- [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) -->
 
 ## Table of Contents
 

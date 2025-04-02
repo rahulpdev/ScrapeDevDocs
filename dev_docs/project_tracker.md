@@ -122,7 +122,7 @@
   - [x] Preserve "Last Updated" data (if feasible) (Marked as infeasible for specific extraction; relies on presence in main content).
   - [x] Test concurrency thoroughly (Basic safety via Lock/Queue; advanced testing deferred).
   - [x] Add remaining command-line arguments (`--output-dir`, `--log-level`, `--num-workers`).
-  - [x] Update README.md / CHANGELOG.md (Created initial versions).
+  - [x] Update README.md / CHANGELOG.md (Created initial versions, added badges to README).
   - [x] Verify .gitignore / .clineignore (`.gitignore` verified; `.clineignore` access blocked by system).
 
 ## Memory Bank Validation Sign-off
@@ -131,11 +131,11 @@
 
 ## Documentation Versions
 
-| Document            | Version | Last Updated | Notes                                                      |
-| ------------------- | ------- | ------------ | ---------------------------------------------------------- |
-| project_brief.md    | v1.6    | 2025-04-02   | Removed SVG conversion, uniform image handling             |
-| codebase_summary.md | v1.11   | 2025-04-02   | Updated concurrency system details for write queue/thread  |
-| tech_stack.md       | v1.15   | 2025-04-02   | Removed SVG tech/arch/tests, updated image handling        |
-| project_tracker.md  | v1.35   | 2025-04-02   | Marked ignore file verification complete, updated versions |
-| current_task.md     | v1.16   | 2025-04-02   | Defined refactor task, added validation checklist          |
-| error_codes.md      | v1.0    | 2025-03-31   | No change                                                  |
+| Document            | Version | Last Updated | Notes                                                     |
+| ------------------- | ------- | ------------ | --------------------------------------------------------- |
+| project_brief.md    | v1.6    | 2025-04-02   | Removed SVG conversion, uniform image handling            |
+| codebase_summary.md | v1.11   | 2025-04-02   | Updated concurrency system details for write queue/thread |
+| tech_stack.md       | v1.15   | 2025-04-02   | Removed SVG tech/arch/tests, updated image handling       |
+| project_tracker.md  | v1.36   | 2025-04-02   | Marked README/badge update complete, updated versions     |
+| current_task.md     | v1.16   | 2025-04-02   | Defined refactor task, added validation checklist         |
+| error_codes.md      | v1.0    | 2025-03-31   | No change                                                 |
