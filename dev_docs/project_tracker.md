@@ -124,6 +124,8 @@
   - [x] Add remaining command-line arguments (`--output-dir`, `--log-level`, `--num-workers`).
   - [x] Update README.md / CHANGELOG.md (Created initial versions, added badges to README).
   - [x] Verify .gitignore / .clineignore (`.gitignore` verified; `.clineignore` access blocked by system).
+- **Release:**
+  - [x] Created GitHub release v0.1.0.
 
 ## Memory Bank Validation Sign-off
 
@@ -136,6 +138,6 @@
 | project_brief.md    | v1.6    | 2025-04-02   | Removed SVG conversion, uniform image handling            |
 | codebase_summary.md | v1.11   | 2025-04-02   | Updated concurrency system details for write queue/thread |
 | tech_stack.md       | v1.15   | 2025-04-02   | Removed SVG tech/arch/tests, updated image handling       |
-| project_tracker.md  | v1.36   | 2025-04-02   | Marked README/badge update complete, updated versions     |
+| project_tracker.md  | v1.37   | 2025-04-02   | Added v0.1.0 release task, updated versions               |
 | current_task.md     | v1.16   | 2025-04-02   | Defined refactor task, added validation checklist         |
 | error_codes.md      | v1.0    | 2025-03-31   | No change                                                 |
