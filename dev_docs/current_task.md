@@ -2,15 +2,15 @@
 
 ## Context
 
-- **Project Scope Change:** Function 1 (Navigation Menu Sitemap Generation) has been removed. The project now focuses solely on Function 2 (URL Content Extraction and Markdown Conversion).
-- Memory Bank documentation is being updated to reflect this change.
-- Architecture decisions related to Function 1 are now obsolete.
-- Current documentation versions (as of this update):
+- **Major Requirement Change:** The project requirements for handling images found on webpages have changed significantly. The previous special handling for SVG files (attempting conversion to Mermaid) is removed.
+- **New Requirement:** All image links (SVG, PNG, JPG, etc.) found in `<img>` tags must be treated uniformly. The script should extract the `src` URL (converted to absolute) and `alt` text, and represent the image using the standard Markdown format `![alt text](URL)`. Image files should **not** be downloaded.
+- Memory Bank documentation has been updated to reflect this change (`project_brief.md`, `codebase_summary.md`, `tech_stack.md`).
+- Current documentation versions (prior to this update):
   - project_brief.md: v1.5
   - codebase_summary.md: v1.9
   - tech_stack.md: v1.14
   - project_tracker.md: v1.26
-  - current_task.md: v1.15 # This version
+  - current_task.md: v1.15
   - error_codes.md: v1.0
 
 ## Completed Work
@@ -54,45 +54,49 @@
 - - Configured ignored error codes (W29x, W391, E30x, E501, E2xx) as per `.clinerules/06_linting.md`.
 - - Updated `tech_stack.md` (v1.14) and `project_tracker.md` (v1.26).
 
-## Current Focus: Implementation Phase 4
+## Current Focus: Refactor Image Handling
 
-**Phase 3 (SVG Identification, Robustness Basics, Progress Bar) is complete.** The script now identifies potential SVGs (though conversion is deferred), includes basic structured logging with error codes, implements retry logic for fetching, and displays a progress bar.
+**Previous Phase (SVG Identification, Robustness Basics, Progress Bar) is complete.** The script identifies images, includes basic structured logging, implements retry logic, and displays a progress bar. However, the image handling logic needs refactoring to meet the new requirements.
 
-The focus now shifts to implementing the core SVG-to-Mermaid conversion, adding comprehensive testing, and performing final refinements.
+The focus is now on removing the SVG-specific code paths and ensuring all images are handled uniformly using standard Markdown links.
 
-## Next Steps: Implementation Phase 4
+## Next Steps: Refactoring and Completion
 
-### 1. SVG Conversion Implementation
+### 1. Refactor Image Handling Logic
 
-- **Target:** Implement the custom logic to parse fetched SVG content and convert it into Mermaid diagram text.
+- **Target:** Modify the code (`scrape_docs.py`, specifically likely within `process_single_url` or related functions) to implement the new uniform image handling.
 - **Steps:**
-  - **Choose Parsing Library:** Select and integrate a suitable SVG parsing library (e.g., `svgpathtools`, `xml.etree.ElementTree`).
-  - **Develop Conversion Logic:** Analyze common SVG structures (nodes, edges, text) found in target documentation diagrams and write Python functions to translate these into corresponding Mermaid syntax (flowchart, sequence diagram, etc., as appropriate).
-  - **Integrate:** Replace the `TODO` placeholder in `process_single_url` with the call to the new conversion function. Handle success and failure, updating the `markdown_output` variable accordingly (either with ` ```mermaid ... ``` ` block or the fallback image tag).
-  - **Refine Fallback:** Ensure the fallback mechanism (using the standard `![alt](src)` tag) works reliably if conversion fails or is not applicable.
+  - **Remove SVG Logic:** Delete code related to identifying SVGs, fetching SVG content, attempting Mermaid conversion, and any associated dependencies (`Mermaid.js CLI`, `svgpathtools`, `svgwrite`, custom parser logic).
+  - **Consolidate Image Handling:** Ensure the existing logic for handling non-SVG images (extracting `src`, `alt`, converting to absolute URL, creating `![alt](src)` tag) is applied to _all_ `<img>` tags encountered, regardless of the `src` file extension.
+  - **Verify No Download:** Confirm that no image files (SVG or otherwise) are downloaded during processing.
+  - **Dependency Cleanup:** Remove unused SVG-related dependencies from any requirements file (e.g., `requirements.txt`, if one exists) or setup configuration.
 
 ### 2. Testing & Quality Assurance
 
-- **Target:** Implement unit and integration tests to ensure script correctness and robustness.
+- **Target:** Update and run tests to ensure the refactored image handling works correctly.
 - **Steps:**
-  - **Setup Pytest:** Configure Pytest in the project.
-  - **Unit Tests:** Write unit tests for key functions like `generate_safe_filename`, `extract_urls_from_tree`, `get_website_name`, and potentially the core SVG parsing/conversion logic once developed. Use mocking (`unittest.mock`) for external dependencies like `requests`.
-  - **Integration Tests:** Create tests that run the script against sample local HTML/SVG files or mocked HTTP responses to verify the end-to-end workflow (excluding full concurrency testing initially).
-  - **Code Quality Tools:** Set up and run Black, Flake8 (using `.flake8` config), and Mypy as defined in `tech_stack.md`. Address reported issues (respecting `.clinerules`).
+  - **Review Existing Tests:** Examine existing tests (if any) related to image handling and update them to reflect the new requirements. Remove tests specific to SVG conversion.
+  - **Add New Tests:** Create specific unit/integration tests to verify:
+    - Both SVG and non-SVG image links are processed identically.
+    - `src` and `alt` attributes are correctly extracted.
+    - Relative `src` URLs are converted to absolute URLs.
+    - The output Markdown is `![alt text](absolute URL)`.
+    - No image files are downloaded.
+  - **Code Quality Tools:** Run Black, Flake8 (using `.flake8` config), and Mypy. Address reported issues.
 
 ### 3. Final Refinements
 
 - **Target:** Address remaining TODOs and enhance overall quality.
 - **Steps:**
   - **Write Queue:** Implement the proper write queue with a dedicated writer thread to ensure atomic file writes, replacing the current direct write in `process_single_url`.
-  - **Logging Enhancement:** Improve structured logging by adding more contextual details (e.g., specific element causing SVG parse error) and ensuring all error paths log appropriate codes.
+  - **Logging Enhancement:** Review and enhance structured logging. Remove any SVG-specific context logging. Ensure all error paths log appropriate codes from `error_codes.md`.
   - **"Last Updated" Data:** Revisit the possibility of extracting "Last Updated" data if feasible patterns are identified.
-  - **Concurrency Testing:** Design and perform tests specifically targeting potential race conditions or deadlocks in the concurrent processing and checklist updates (this can be complex).
+  - **Concurrency Testing:** Design and perform tests specifically targeting potential race conditions or deadlocks in the concurrent processing and checklist updates.
   - **CLI Arguments:** Add any remaining necessary command-line arguments (e.g., `--output-dir`, `--log-level`, `--num-workers`).
-  - **README/CHANGELOG:** Update `README.md` and `CHANGELOG.md` as per `.clinerules/04_readme.md`.
-  - **.gitignore/.clineignore:** Ensure these files are up-to-date as per `.clinerules/03_gitrules.md` and `.clinerules/05_clinerules.md`.
+  - **README/CHANGELOG:** Update `README.md` and `CHANGELOG.md` to reflect the removal of SVG conversion and the final state of image handling.
+  - **.gitignore/.clineignore:** Ensure these files are up-to-date.
 
-### Refactoring (Completed)
+### Previous Refactoring (Completed)
 
 1.  **Code Changes:** Modified `scrape_docs.py` to:
     - Create a root `output_docs/` directory.
@@ -107,8 +111,23 @@ The focus now shifts to implementing the core SVG-to-Mermaid conversion, adding 
     - Updated `project_tracker.md` (v1.26) to mark refactoring complete and update versions.
     - Updated this `current_task.md` file (v1.15).
 
-### Documentation Finalization (Post Phase 4)
+## Memory Bank Validation Checklist (Pre-Task)
 
-1.  Update `project_tracker.md` to mark completed Phase 4 tasks.
+- **project_brief.md (v1.6):**
+  - [x] Verify requirements still match task (Uniform image handling `![alt](url)`, no download).
+  - [x] Check for conflicting updates (None found).
+  - [x] Confirm implementation constraints (Markdown output, CLI input).
+- **codebase_summary.md (v1.10):**
+  - [x] Verify requirements still match task (Image processing section updated, dependencies reflect removal).
+  - [x] Check for conflicting updates (None found).
+  - [x] Confirm implementation constraints (Concurrency model, data flow).
+- **tech_stack.md (v1.15):**
+  - [x] Verify requirements still match task (SVG tech removed, image handling approach updated).
+  - [x] Check for conflicting updates (None found).
+  - [x] Confirm implementation constraints (Python version, core libs).
+
+## Documentation Finalization (Post Refactoring)
+
+1.  Update `project_tracker.md` to mark completed refactoring tasks.
 2.  Increment version numbers for all modified Memory Bank documents.
 3.  Update this `current_task.md` file (v1.16+) to reflect project completion or any remaining minor tasks.

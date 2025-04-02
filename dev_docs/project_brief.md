@@ -13,21 +13,10 @@ To crawl online developer documentation specified in a tree-structure markdown f
         - Do NOT remove any content between section headers.
         - Replace all relative path URLs with full path URLs.
         - Preserve all external links as markdown references.
-        - Process all images referenced on the webpage:
-          - Identify the image URL and alt text from the HTML.
-          - If the image URL points to an SVG file (based on extension or content type):
-            - Retrieve the SVG file.
-            - Attempt conversion to a Mermaid diagram, preserving:
-              - Node relationships and hierarchy
-              - Connector directions and types
-              - Label positioning and content
-            - On any conversion failure or invalid SVG:
-              - Preserve the original image reference using its URL and alt text.
-              - Do not include error notices or retain failed conversion attempts.
-            - Discard the SVG file after use.
-          - For all other image formats (PNG, JPG, etc.) or if the format cannot be determined as SVG:
-            - Do **not** download the image file.
-            - Preserve the original image reference using its URL and alt text.
+        - Process all image links (regardless of format, e.g., SVG, PNG, JPG) referenced on the webpage:
+          - Identify the image URL and any associated alt/reference text from the HTML.
+          - Do **not** download the image file.
+          - Preserve the original image reference as a standard Markdown image link: `![alt text](image URL)`.
         - Preserve "Last Updated" data verbatim.
       - For each markdown file:
         - Add the webpage full path URL to the end of the file.
@@ -40,7 +29,7 @@ To crawl online developer documentation specified in a tree-structure markdown f
         - A `<base_name>_scrape_checklist.md` crawler task tracker.
         - Processed markdown files within the `<base_name>_docs` folder containing:
           - Original content structure
-          - Converted mermaid diagrams (where applicable)
+          - Preserved image references as Markdown links
           - Source URL reference
       - Accept as a terminal input (with input validation) a URL to a GitHub repository raw file (or similar raw text source).
       - **Input File Format Requirement:** The file at the URL **must** contain a tree structure where each line representing a URL to crawl follows the exact format: `[TREE_PREFIX][SPACE][URL]`.
@@ -69,7 +58,7 @@ To crawl online developer documentation specified in a tree-structure markdown f
 
       - Markdown as sole output format
       - Tables preferred over other data representations
-      - SVG conversion focuses on structural accuracy
+      - Image links preserved as standard Markdown `![alt](url)`
 
     - **Operational Constraints**:
       - No cloud storage integration

@@ -79,12 +79,15 @@
 
 ## Implementation Phase 3 Tasks (Completed)
 
-- **Full Image Processing (SVG Handling):**
-  - [x] Identify SVGs by extension.
-  - [x] Fetch SVG content using `fetch_url_content`.
-  - [ ] Attempt Mermaid Conversion (Placeholder added, requires custom logic - Deferred).
-  - [x] Handle Conversion Output (Fallback to standard markdown implemented).
-  - [x] Placeholder Refinement (Using unique placeholders).
+- **Image Processing (Initial):**
+  - [x] Identify `<img>` tags.
+  - [x] Convert `src` to absolute URL.
+  - [x] Preserve `alt` text.
+  - [x] Represent non-SVG images using Markdown syntax `![alt](src)`.
+  - [x] Explicitly do not download non-SVG images.
+  - [x] Identify SVGs by extension (Logic now obsolete).
+  - [x] Fetch SVG content (Logic now obsolete).
+  - [x] Handle SVG fallback to standard markdown (Logic now obsolete).
 - **Refinements & Robustness:**
   - [ ] Implement proper write queue for atomic file writes (Deferred).
   - [x] Implement detailed structured JSON logging (Basic structure with `python-json-logger` added).
@@ -98,31 +101,41 @@
   - [x] Move output files (`*_scrape_checklist.md`, `*_docs/`) to `output_docs/` directory.
   - [x] Rename output files/folders based on H1 tag (e.g., `<h1>_scrape_checklist.md`, `<h1>_docs/`).
 
-## Future Implementation Phases (Post Phase 3)
+## Current Phase: Refactor Image Handling
 
-- **SVG Conversion Implementation:**
-  - [ ] Implement custom SVG to Mermaid text conversion logic.
-  - [ ] Integrate the conversion logic into `process_single_url`.
+- **Refactor Image Logic:**
+  - [ ] Remove SVG identification logic.
+  - [ ] Remove SVG fetching logic.
+  - [ ] Remove Mermaid conversion placeholders/attempts.
+  - [ ] Ensure uniform `![alt](url)` handling for all `<img>` tags.
+  - [ ] Verify no image downloads occur.
+  - [ ] Remove SVG-related dependencies (Mermaid CLI, svgpathtools, etc.).
 - **Testing & Quality Assurance:**
-  - [ ] Implement Pytest unit/integration tests.
-  - [ ] Implement SVG-specific tests.
-  - [x] Set up and run code quality tools (Black, Flake8, Mypy).
-    - [x] Added `.flake8` configuration file.
-- **Final Refinements:**
+  - [ ] Review/update existing image tests.
+  - [ ] Add tests for uniform image handling (SVG vs non-SVG).
+  - [ ] Add tests verifying no image downloads.
+  - [ ] Run code quality tools (Black, Flake8, Mypy).
+- **Final Refinements (Post-Refactor):**
   - [ ] Implement proper write queue for atomic file writes.
-  - [ ] Enhance structured logging with more detail and context.
+  - [ ] Enhance structured logging (remove SVG context).
   - [ ] Implement robust validation for extracted URLs.
   - [ ] Preserve "Last Updated" data (if feasible).
   - [ ] Test concurrency thoroughly.
   - [ ] Add remaining command-line arguments (e.g., output dir override).
+  - [ ] Update README.md / CHANGELOG.md.
+  - [ ] Verify .gitignore / .clineignore.
+
+## Memory Bank Validation Sign-off
+
+- [x] Pre-task validation checklist completed in `current_task.md` (v1.16). Requirements confirmed.
 
 ## Documentation Versions
 
-| Document            | Version | Last Updated | Notes                                   |
-| ------------------- | ------- | ------------ | --------------------------------------- |
-| project_brief.md    | v1.5    | 2025-04-01   | Updated output paths/naming & gitignore |
-| codebase_summary.md | v1.9    | 2025-04-01   | Updated output paths/naming & data flow |
-| tech_stack.md       | v1.14   | 2025-04-02   | Added .flake8 config details            |
-| project_tracker.md  | v1.26   | 2025-04-02   | Added .flake8 task, updated versions    |
-| current_task.md     | v1.15   | 2025-04-02   | Reflect .flake8 task completion         |
-| error_codes.md      | v1.0    | 2025-03-31   |                                         |
+| Document            | Version | Last Updated | Notes                                                 |
+| ------------------- | ------- | ------------ | ----------------------------------------------------- |
+| project_brief.md    | v1.6    | 2025-04-02   | Removed SVG conversion, uniform image handling        |
+| codebase_summary.md | v1.10   | 2025-04-02   | Updated image processing, removed SVG deps            |
+| tech_stack.md       | v1.15   | 2025-04-02   | Removed SVG tech/arch/tests, updated image handling   |
+| project_tracker.md  | v1.27   | 2025-04-02   | Updated tasks for refactor, added validation sign-off |
+| current_task.md     | v1.16   | 2025-04-02   | Defined refactor task, added validation checklist     |
+| error_codes.md      | v1.0    | 2025-03-31   | No change                                             |

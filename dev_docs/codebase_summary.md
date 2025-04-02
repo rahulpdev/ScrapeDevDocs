@@ -18,9 +18,9 @@
 
 3. **Image Processing**
 
-   - SVG conversion to mermaid diagrams
-   - Simple fallback to original content on any failure
-   - Original content preservation for non-SVG images
+   - Identifies image URLs and alt text from HTML (`<img>` tags).
+   - Preserves image references as standard Markdown links (`![alt text](URL)`).
+   - Does not download image files.
 
 4. **Concurrency System**
    - Write queue for atomic file operations
@@ -59,7 +59,6 @@ flowchart LR
 
   - BeautifulSoup4: HTML parsing
   - Requests: HTTP requests
-  - Mermaid.js CLI: Diagram conversion
   - Python Markdown Parser (e.g., `markdown` library or similar): To parse the input tree structure file.
   - fcntl: File locking (if applicable on the target OS, for checklist/log files)
   - `dev_docs/error_codes.md`: Defines the structured error codes used in logging.
