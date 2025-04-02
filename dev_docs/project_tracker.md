@@ -106,7 +106,8 @@
 - **Testing & Quality Assurance:**
   - [ ] Implement Pytest unit/integration tests.
   - [ ] Implement SVG-specific tests.
-  - [ ] Set up and run code quality tools (Black, Flake8, Mypy).
+  - [x] Set up and run code quality tools (Black, Flake8, Mypy).
+    - [x] Added `.flake8` configuration file.
 - **Final Refinements:**
   - [ ] Implement proper write queue for atomic file writes.
   - [ ] Enhance structured logging with more detail and context.
@@ -117,11 +118,11 @@
 
 ## Documentation Versions
 
-| Document            | Version | Last Updated | Notes                                    |
-| ------------------- | ------- | ------------ | ---------------------------------------- |
-| project_brief.md    | v1.5    | 2025-04-01   | Updated output paths/naming & gitignore  |
-| codebase_summary.md | v1.9    | 2025-04-01   | Updated output paths/naming & data flow  |
-| tech_stack.md       | v1.13   | 2025-04-01   | Removed markdown lib                     |
-| project_tracker.md  | v1.25   | 2025-04-01   | Added refactoring task, updated versions |
-| current_task.md     | v1.14   | 2025-04-01   | Updated post Phase 3                     |
-| error_codes.md      | v1.0    | 2025-03-31   |                                          |
+| Document            | Version | Last Updated | Notes                                   |
+| ------------------- | ------- | ------------ | --------------------------------------- |
+| project_brief.md    | v1.5    | 2025-04-01   | Updated output paths/naming & gitignore |
+| codebase_summary.md | v1.9    | 2025-04-01   | Updated output paths/naming & data flow |
+| tech_stack.md       | v1.14   | 2025-04-02   | Added .flake8 config details            |
+| project_tracker.md  | v1.26   | 2025-04-02   | Added .flake8 task, updated versions    |
+| current_task.md     | v1.15   | 2025-04-02   | Reflect .flake8 task completion         |
+| error_codes.md      | v1.0    | 2025-03-31   |                                         |

@@ -5,12 +5,12 @@
 - **Project Scope Change:** Function 1 (Navigation Menu Sitemap Generation) has been removed. The project now focuses solely on Function 2 (URL Content Extraction and Markdown Conversion).
 - Memory Bank documentation is being updated to reflect this change.
 - Architecture decisions related to Function 1 are now obsolete.
-- Current documentation versions (prior to this update):
-  - project_brief.md: v1.3
-  - codebase_summary.md: v1.7
-  - tech_stack.md: v1.10
-  - project_tracker.md: v1.25 # Updated version
-  - current_task.md: v1.14 # Previous version
+- Current documentation versions (as of this update):
+  - project_brief.md: v1.5
+  - codebase_summary.md: v1.9
+  - tech_stack.md: v1.14
+  - project_tracker.md: v1.26
+  - current_task.md: v1.15 # This version
   - error_codes.md: v1.0
 
 ## Completed Work
@@ -45,10 +45,14 @@
    - Granular file locking (fcntl) for:
      - Checklist files (`<website name>_scrape_checklist.md`)
      - Log files (`<website name>_errors.log`)
-   - Thread-per-URL processing with:
-     - Independent error handling
-     - Automatic resource cleanup
-     - No shared state between threads/URLs
+   - Thread-per-URL processing with: - Independent error handling - Automatic resource cleanup - No shared state between threads/URLs
+     +### Code Quality Setup
+
+- +1. **Flake8 Configuration:**
+- - Created `.flake8` file in the root directory.
+- - Configured exclusions (`.venv`, `output_docs`, `tests`).
+- - Configured ignored error codes (W29x, W391, E30x, E501, E2xx) as per `.clinerules/06_linting.md`.
+- - Updated `tech_stack.md` (v1.14) and `project_tracker.md` (v1.26).
 
 ## Current Focus: Implementation Phase 4
 
@@ -74,7 +78,7 @@ The focus now shifts to implementing the core SVG-to-Mermaid conversion, adding 
   - **Setup Pytest:** Configure Pytest in the project.
   - **Unit Tests:** Write unit tests for key functions like `generate_safe_filename`, `extract_urls_from_tree`, `get_website_name`, and potentially the core SVG parsing/conversion logic once developed. Use mocking (`unittest.mock`) for external dependencies like `requests`.
   - **Integration Tests:** Create tests that run the script against sample local HTML/SVG files or mocked HTTP responses to verify the end-to-end workflow (excluding full concurrency testing initially).
-  - **Code Quality Tools:** Set up and run Black, Flake8, and Mypy as defined in `tech_stack.md`. Address reported issues (respecting `.clinerules`).
+  - **Code Quality Tools:** Set up and run Black, Flake8 (using `.flake8` config), and Mypy as defined in `tech_stack.md`. Address reported issues (respecting `.clinerules`).
 
 ### 3. Final Refinements
 
@@ -100,11 +104,11 @@ The focus now shifts to implementing the core SVG-to-Mermaid conversion, adding 
     - Updated `project_brief.md` (v1.5) with new output structure and `.gitignore` rule.
     - Updated `codebase_summary.md` (v1.9) with new output structure and data flow diagram.
     - Updated `.gitignore` to ignore `output_docs/`.
-    - Updated `project_tracker.md` (v1.25) to mark refactoring complete and update versions.
+    - Updated `project_tracker.md` (v1.26) to mark refactoring complete and update versions.
     - Updated this `current_task.md` file (v1.15).
 
 ### Documentation Finalization (Post Phase 4)
 
 1.  Update `project_tracker.md` to mark completed Phase 4 tasks.
 2.  Increment version numbers for all modified Memory Bank documents.
-3.  Update this `current_task.md` file (v1.16) to reflect project completion or any remaining minor tasks.
+3.  Update this `current_task.md` file (v1.16+) to reflect project completion or any remaining minor tasks.

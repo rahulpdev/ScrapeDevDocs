@@ -1,0 +1,26 @@
+[flake8]
+# Exclude directories/files from linting
+# .venv: Python virtual environment
+# output_docs: Generated documentation files
+# tests: Temporarily excluding tests, can be removed if tests need linting
+exclude =
+    .venv,
+    output_docs/,
+    tests/
+
+# Ignore specific Flake8 codes
+# W291, W292, W293: Whitespace warnings
+# W391: Blank line at end of file
+# E302, E303, E305: Blank line rules
+# E501: Line too long
+# E2xx: All E2xx errors (whitespace around operators, etc.)
+ignore =
+    W291,
+    W292,
+    W293,
+    W391,
+    E302,
+    E303,
+    E305,
+    E501,
+    E2

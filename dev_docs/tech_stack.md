@@ -106,6 +106,8 @@
 - **Code Quality**
   - Black (v23.12.0)
   - Flake8 (v6.1.0)
+    - Configuration managed in `.flake8` file in the root directory.
+    - Ignores specific codes (W29x, W391, E30x, E501, E2xx) and excludes `.venv`, `output_docs`, `tests`.
   - Mypy (v1.7.1)
 
 ## Architectural Decisions
