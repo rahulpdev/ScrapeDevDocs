@@ -11,3 +11,6 @@ output_docs/
 # Cline files and folders
 .clinerules/
 .clineignore
+
+.flake8
+.gitignore
