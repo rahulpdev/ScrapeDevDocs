@@ -101,16 +101,16 @@
   - [x] Move output files (`*_scrape_checklist.md`, `*_docs/`) to `output_docs/` directory.
   - [x] Rename output files/folders based on H1 tag (e.g., `<h1>_scrape_checklist.md`, `<h1>_docs/`).
 
-## Current Phase: Refactor Image Handling
+## Current Phase: Refactor Image Handling (Completed)
 
 - **Refactor Image Logic:**
-  - [ ] Remove SVG identification logic.
-  - [ ] Remove SVG fetching logic.
-  - [ ] Remove Mermaid conversion placeholders/attempts.
-  - [ ] Ensure uniform `![alt](url)` handling for all `<img>` tags.
-  - [ ] Verify no image downloads occur.
-  - [ ] Remove SVG-related dependencies (Mermaid CLI, svgpathtools, etc.).
-- **Testing & Quality Assurance:**
+  - [x] Remove SVG identification logic.
+  - [x] Remove SVG fetching logic.
+  - [x] Remove Mermaid conversion placeholders/attempts.
+  - [x] Ensure uniform `![alt](url)` handling for all `<img>` tags.
+  - [x] Verify no image downloads occur (Code review confirms no download logic added).
+  - [x] Remove SVG-related dependencies (No direct imports found in script; removed from `tech_stack.md`).
+- **Testing & Quality Assurance (Next Steps):**
   - [ ] Review/update existing image tests.
   - [ ] Add tests for uniform image handling (SVG vs non-SVG).
   - [ ] Add tests verifying no image downloads.

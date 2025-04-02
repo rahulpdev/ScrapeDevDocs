@@ -84,9 +84,9 @@ def get_h1_from_url(url):
     try:
         soup = BeautifulSoup(html_content, 'lxml')
         h1_tag = soup.find('h1')
-        if h1_tag and h1_tag.string:
-            # Explicitly cast to str to potentially help Pylance
-            h1_text = str(h1_tag.string).strip()
+        # Use get_text() for robustness instead of .string
+        if h1_tag:
+            h1_text = h1_tag.get_text(strip=True)
             sanitized_h1 = sanitize_for_filename(h1_text)
             if sanitized_h1:
                 logging.info(f"Extracted and sanitized H1: '{sanitized_h1}' from {url}")
@@ -98,7 +98,11 @@ def get_h1_from_url(url):
             logging.warning(f"No H1 tag found or H1 tag is empty in {url}. Falling back.")
             return None
     except Exception as e:
-        logging.error(f"Error parsing HTML for H1 extraction from {url}: {e}", exc_info=True, extra={'url': url, 'error_code': 7003})  # New error code for H1 parse fail
+        logging.error(
+            f"Error parsing HTML for H1 extraction from {url}: {e}",
+            exc_info=True,
+            extra={'url': url, 'error_code': 7003}
+        )  # New error code for H1 parse fail
         return None
 
 
@@ -142,13 +146,13 @@ def fetch_url_content(url):
         logging.error(
             f"Timeout fetching {url}: {e}",
             extra={'url': url, 'error_code': 1001}
-            )
+        )
         return None
     except requests.exceptions.ConnectionError as e:
         logging.error(
             f"Connection error fetching {url}: {e}",
             extra={'url': url, 'error_code': 1002}
-            )
+        )
         return None
     except requests.exceptions.HTTPError as e:
         # Log HTTP errors but potentially continue if needed (e.g., 404
@@ -159,15 +163,15 @@ def fetch_url_content(url):
                 'url': url,
                 'error_code': 1003,
                 'status_code': e.response.status_code
-                }
-            )
+            }
+        )
         return None  # Or return response if 404 needs specific handling
     except requests.exceptions.RequestException as e:
         # Catch other potential request exceptions
         logging.error(
             f"General request error fetching {url}: {e}",
             extra={'url': url, 'error_code': 1000}
-            )  # Generic network error
+        )  # Generic network error
         return None
 
 
@@ -222,7 +226,10 @@ def get_website_name(url):
         return name
     except Exception as e:
         # Log the error with a specific code if needed
-        logging.error(f"Could not derive website name from URL {url}: {e}", extra={'url': url, 'error_code': 6004})  # New error code
+        logging.error(
+            f"Could not derive website name from URL {url}: {e}",
+            extra={'url': url, 'error_code': 6004}
+        )  # New error code
         return "fallback_domain_name"  # Fallback name
 
 
@@ -264,7 +271,7 @@ def generate_checklist_file(base_name, filepath, urls):
         logging.error(
             f"Error writing checklist file {filepath}: {e}",
             extra={'filepath': filepath, 'error_code': 5002}
-            )
+        )
         return False
 
 
@@ -310,18 +317,18 @@ def update_checklist_file(checklist_filepath, url_to_check, lock):
             logging.error(
                 f"Checklist file not found during update: {checklist_filepath}",
                 extra={'filepath': checklist_filepath, 'error_code': 5004}
-                )
+            )
         except IOError as e:
             logging.error(
                 f"IOError updating checklist file {checklist_filepath}: {e}",
                 extra={'filepath': checklist_filepath, 'error_code': 5002}
-                )  # Assuming write error
+            )  # Assuming write error
         except Exception as e:
             logging.error(
                 f"Unexpected error updating checklist {checklist_filepath}: {e}",
                 exc_info=True,
                 extra={'filepath': checklist_filepath, 'error_code': 9001}
-                )
+            )
         finally:
             logging.debug(
                 f"Released lock for checklist file: {checklist_filepath}"
@@ -359,63 +366,39 @@ def process_single_url(
             a_tag['href'] = absolute_href
             # logging.debug(f"Converted link: {original_href} -> {absolute_href}")  # Optional debug
 
-        # --- Phase 3, Step 1: Handle Images (including SVG placeholders) ---
+        # --- Refactored Image Handling (Uniform) ---
         image_placeholders = {}
         for img_tag in soup.find_all('img'):
             original_src = img_tag.get('src')
             if not original_src:
+                logging.warning(f"Skipping img tag with no src in {url}")
                 continue  # Skip images without src
 
             absolute_src = urljoin(url, original_src)
-            # Default alt text if missing
-            alt_text = img_tag.get('alt', 'image')
+            # Default alt text if missing, sanitize for Markdown
+            alt_text = img_tag.get('alt', '')
+            # Basic sanitization for alt text (e.g., remove brackets that might break Markdown)
+            alt_text = alt_text.replace('[', '').replace(']', '').replace('(', '').replace(')', '')
+
+            # Generate standard Markdown image link for ALL images
+            markdown_image_tag = f"![{alt_text}]({absolute_src})"
+            logging.debug(f"Generated Markdown for image: {markdown_image_tag}")
+
+            # Use a simple placeholder based on the absolute source URL
+            # Ensures uniqueness if the same image appears multiple times
             placeholder = f"__IMAGE_PLACEHOLDER_{absolute_src}__"
-            # Default to standard markdown
-            markdown_output = f"![{alt_text}]({absolute_src})"
 
-            # Check if it's an SVG
-            if absolute_src.lower().endswith(".svg"):
-                logging.info(f"Identified potential SVG: {absolute_src}")
-                # Attempt to fetch SVG content
-                # Re-use fetch function
-                svg_content = fetch_url_content(absolute_src)
-                if svg_content:
-                    # TODO: Implement custom SVG to Mermaid text conversion here.
-                    # This likely involves parsing svg_content using libraries
-                    # like svgpathtools or xml.etree.ElementTree to understand
-                    # the structure and generate Mermaid syntax.
-                    # For now, we assume conversion fails and use the fallback.
-                    conversion_successful = False  # Placeholder variable
-
-                    if conversion_successful:
-                        # Future: Use the converted Mermaid text
-                        # markdown_output = f"```mermaid\n{mermaid_text}\n```"
-                        # logging.info(f"Successfully converted SVG to
-                        #  Mermaid: {absolute_src}")
-                        pass  # Keep placeholder logic for now
-                    else:
-                        # Fallback: Use standard markdown image tag (already default)
-                        logging.warning(
-                            f"SVG to Mermaid conversion failed or not implemented for: {absolute_src}. Using fallback."
-                            )
-                else:
-                    logging.error(
-                        f"Failed to fetch SVG content for: {absolute_src}. Using fallback."
-                        )
-                    # Fallback: Use standard markdown image tag
-                    #  (already default)
-
-            # Store the final markdown representation (either standard tag or
-            #  future Mermaid)
-            image_placeholders[placeholder] = markdown_output
+            # Store the final markdown representation
+            image_placeholders[placeholder] = markdown_image_tag
 
             # Replace the img tag in the soup with the placeholder text
+            # This needs to happen *before* markdownify runs
             img_tag.replace_with(placeholder)
             logging.debug(
                 f"Replaced img tag {original_src} with placeholder {placeholder}"
                 )
 
-        # --- Phase 2, Step 1: Convert HTML Body to Markdown ---
+        # --- Convert HTML Body to Markdown ---
         # Using markdownify to preserve structure (headings, lists,
         #  code blocks etc.) Link and image tag replacements were
         #  done *before* this step.
@@ -443,14 +426,14 @@ def process_single_url(
                     f"Markdownify conversion failed for {url}: {md_err}",
                     exc_info=True,
                     extra={'url': url, 'error_code': 7001}
-                    )
+                )
                 # Indicate failure in output
                 markdown_content = "[Markdown conversion failed]"
         else:
             logging.error(
                 f"No HTML content found to convert for {url}",
                 extra={'url': url, 'error_code': 7002}
-                )
+            )
 
         # --- Post-processing: Replace Image Placeholders ---
         processed_content = markdown_content
@@ -482,7 +465,7 @@ def process_single_url(
             logging.error(
                 f"Error writing file {filepath}: {e}",
                 extra={'filepath': filepath, 'error_code': 5002}
-                )
+            )
             success = False  # Indicate failure
 
     except Exception as e:
@@ -491,7 +474,8 @@ def process_single_url(
         logging.error(
             f"Error processing HTML for {url}: {e}",
             exc_info=True,
-            extra={'url': url, 'error_code': 9001})  # General processing error
+            extra={'url': url, 'error_code': 9001}
+        )  # General processing error
         success = False  # Indicate failure
 
     # --- Update Checklist (only if processing and saving succeeded) ---
@@ -537,7 +521,7 @@ def worker(
                     f"Error in process_single_url for {url} within worker {threading.current_thread().name}: {process_err}",
                     exc_info=True,
                     extra={'url': url, 'error_code': 9001}
-                    )
+                )
             finally:
                 # Ensure task_done is called regardless of success/failure in
                 #  process_single_url
@@ -581,7 +565,7 @@ def main():
         logging.critical(
             "Failed to fetch markdown tree content. Exiting.",
             extra={'url': args.tree_url, 'error_code': 6001}
-            )
+        )
         sys.exit(1)
 
     # 2. Extract URLs from the tree
@@ -590,7 +574,7 @@ def main():
         logging.critical(
             "No URLs extracted from the markdown tree. Exiting.",
             extra={'error_code': 6003}
-            )
+        )
         sys.exit(1)
 
     # 3. Validate extracted URLs (optional step shown here)
@@ -600,12 +584,12 @@ def main():
         logging.warning(
             f"Found {invalid_count} invalid URL formats in the input tree.",
             extra={'invalid_count': invalid_count}
-            )
+        )
     if not valid_urls:
         logging.critical(
             "No valid URLs found after validation. Exiting.",
             extra={'error_code': 6003}
-            )
+        )
         sys.exit(1)
 
     # 4. Get Base Name (H1 or Fallback) and Define Output Paths
@@ -623,7 +607,7 @@ def main():
         logging.critical(
             f"Failed to create root output directory {output_root_dir}: {e}. Exiting.",
             extra={'directory': output_root_dir, 'error_code': 5002}
-            )
+        )
         sys.exit(1)
 
     checklist_filename = f"{base_name}_scrape_checklist.md"
@@ -636,7 +620,7 @@ def main():
         logging.critical(
             f"Failed to generate checklist file at {checklist_filepath}. Exiting.",
             extra={'filepath': checklist_filepath, 'error_code': 5002}
-            )
+        )
         sys.exit(1)
 
     # 6. Create the specific output directory for markdown files
@@ -648,7 +632,7 @@ def main():
         logging.critical(
             f"Failed to create output directory {output_dir}: {e}. Exiting.",
             extra={'directory': output_dir, 'error_code': 5002}
-            )
+        )
         sys.exit(1)
 
     logging.info("Setup complete. Starting concurrent URL processing.")
