@@ -3,8 +3,8 @@
 
 """
 Main script for crawling developer documentation based on a markdown tree
-structure. Fetches content, processes HTML, handles images (including SVG
-to Mermaid conversion), and saves structured markdown files.
+structure. Fetches content, processes HTML, handles images uniformly,
+and saves structured markdown files using a write queue.
 """
 
 import argparse
@@ -113,7 +113,23 @@ def parse_arguments():
         "tree_url",
         help="URL to the raw markdown file containing the URL tree structure."
     )
-    # TODO: Add arguments for output directory, log file, etc. if needed
+    parser.add_argument(
+        "-o", "--output-dir",
+        default="output_docs",
+        help="Root directory to save checklists and documentation folders (default: output_docs)"
+    )
+    parser.add_argument(
+        "-l", "--log-level",
+        default="INFO",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        help="Set the logging level (default: INFO)"
+    )
+    parser.add_argument(
+        "-w", "--num-workers",
+        type=int,
+        default=5,
+        help="Number of concurrent worker threads (default: 5)"
+    )
     return parser.parse_args()
 
 
