@@ -23,14 +23,17 @@
    - Does not download image files.
 
 4. **Concurrency System**
-   - Write queue for atomic file operations
-     - File locking (fcntl) for:
-       - Checklist files (`<website name>_scrape_checklist.md`)
-       - Log files (`<website name>_errors.log`)
-   - Thread-per-URL processing with:
-     - Independent error handling
-     - Automatic resource cleanup
-     - No shared state between threads/URLs
+   - **Write Queue:** A dedicated thread (`writer_thread`) handles all file writing operations via a queue (`write_queue`) to ensure atomicity and prevent race conditions during file saving.
+   - **File Locking:** Uses `threading.Lock` for atomic updates to shared resources:
+     - Checklist files (`<base_name>_scrape_checklist.md`)
+     - Log files (`<website name>_errors.log`)
+   - **Thread-per-URL Processing:** Each URL is processed in a separate worker thread (`worker`) which:
+     - Fetches and parses HTML.
+     - Generates Markdown content.
+     - Puts the result `(filepath, content)` onto the `write_queue`.
+     - Handles errors independently.
+     - Cleans up resources automatically.
+     - Maintains no shared state with other worker threads regarding content processing.
 
 ## Data Flow
 
@@ -41,15 +44,16 @@ flowchart LR
     B -->|Errors| D["Error Log"]
     C --> E["URL List Extractor"]
     E --> F["Determine Base Name (H1/Domain)"]
-    F --> G["Content Extractor"]
+    F --> G["Content Extractor (Worker Thread)"]
     G --> H["Site Folder (output_docs/<base_name>_docs/)"]
     G --> I["Checklist (output_docs/<base_name>_scrape_checklist.md)"]
     G --> J["Write Queue"]
-    J -->|Atomic Write| K["Markdown Content Files (in Site Folder)"]
+    J --> W["Writer Thread"]
+    W -->|Atomic Write| K["Markdown Content Files (in Site Folder)"]
 
     subgraph Concurrency
         direction LR
-        L["Thread-per-URL Processing"] --> J
+        L["URL Processing (Worker Threads)"] --> J
     end
 ```
 
@@ -76,3 +80,4 @@ flowchart LR
   - Write queue
   - File locking (for checklist/log files)
   - Thread-per-URL processing (adjusted from thread-per-row)
+  - Implemented dedicated writer thread and queue for atomic file writes.

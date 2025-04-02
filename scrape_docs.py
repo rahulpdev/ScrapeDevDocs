@@ -98,11 +98,8 @@ def get_h1_from_url(url):
             logging.warning(f"No H1 tag found or H1 tag is empty in {url}. Falling back.")
             return None
     except Exception as e:
-        logging.error(
-            f"Error parsing HTML for H1 extraction from {url}: {e}",
-            exc_info=True,
-            extra={'url': url, 'error_code': 7003}
-        )  # New error code for H1 parse fail
+        # Simplified logging call
+        logging.error(f"Error parsing HTML for H1 extraction from {url}: {e} [EC:7003]", exc_info=True)
         return None
 
 
@@ -143,35 +140,23 @@ def fetch_url_content(url):
         logging.info(f"Successfully fetched content from: {url}")
         return response.text
     except requests.exceptions.Timeout as e:
-        logging.error(
-            f"Timeout fetching {url}: {e}",
-            extra={'url': url, 'error_code': 1001}
-        )
+        # Simplified logging
+        logging.error(f"Timeout fetching {url}: {e} [EC:1001]")
         return None
     except requests.exceptions.ConnectionError as e:
-        logging.error(
-            f"Connection error fetching {url}: {e}",
-            extra={'url': url, 'error_code': 1002}
-        )
+        # Simplified logging
+        logging.error(f"Connection error fetching {url}: {e} [EC:1002]")
         return None
     except requests.exceptions.HTTPError as e:
         # Log HTTP errors but potentially continue if needed (e.g., 404
         #  is handled later)
-        logging.warning(
-            f"HTTP error fetching {url}: {e.response.status_code}",
-            extra={
-                'url': url,
-                'error_code': 1003,
-                'status_code': e.response.status_code
-            }
-        )
+        # Simplified logging
+        logging.warning(f"HTTP error fetching {url}: {e.response.status_code} [EC:1003]")
         return None  # Or return response if 404 needs specific handling
     except requests.exceptions.RequestException as e:
         # Catch other potential request exceptions
-        logging.error(
-            f"General request error fetching {url}: {e}",
-            extra={'url': url, 'error_code': 1000}
-        )  # Generic network error
+        # Simplified logging
+        logging.error(f"General request error fetching {url}: {e} [EC:1000]")
         return None
 
 
@@ -226,10 +211,8 @@ def get_website_name(url):
         return name
     except Exception as e:
         # Log the error with a specific code if needed
-        logging.error(
-            f"Could not derive website name from URL {url}: {e}",
-            extra={'url': url, 'error_code': 6004}
-        )  # New error code
+        # Simplified logging
+        logging.error(f"Could not derive website name from URL {url}: {e} [EC:6004]")
         return "fallback_domain_name"  # Fallback name
 
 
@@ -268,10 +251,8 @@ def generate_checklist_file(base_name, filepath, urls):
         logging.info(f"Successfully created checklist file: {filepath}")  # Log full path
         return True
     except IOError as e:
-        logging.error(
-            f"Error writing checklist file {filepath}: {e}",
-            extra={'filepath': filepath, 'error_code': 5002}
-        )
+        # Simplified logging
+        logging.error(f"Error writing checklist file {filepath}: {e} [EC:5002]")
         return False
 
 
@@ -314,21 +295,14 @@ def update_checklist_file(checklist_filepath, url_to_check, lock):
                 f.writelines(lines)
 
         except FileNotFoundError:
-            logging.error(
-                f"Checklist file not found during update: {checklist_filepath}",
-                extra={'filepath': checklist_filepath, 'error_code': 5004}
-            )
+            # Simplified logging
+            logging.error(f"Checklist file not found during update: {checklist_filepath} [EC:5004]")
         except IOError as e:
-            logging.error(
-                f"IOError updating checklist file {checklist_filepath}: {e}",
-                extra={'filepath': checklist_filepath, 'error_code': 5002}
-            )  # Assuming write error
+            # Simplified logging
+            logging.error(f"IOError updating checklist file {checklist_filepath}: {e} [EC:5002]")
         except Exception as e:
-            logging.error(
-                f"Unexpected error updating checklist {checklist_filepath}: {e}",
-                exc_info=True,
-                extra={'filepath': checklist_filepath, 'error_code': 9001}
-            )
+            # Simplified logging
+            logging.error(f"Unexpected error updating checklist {checklist_filepath}: {e} [EC:9001]", exc_info=True)
         finally:
             logging.debug(
                 f"Released lock for checklist file: {checklist_filepath}"
@@ -367,7 +341,7 @@ def process_single_url(
             # logging.debug(f"Converted link: {original_href} -> {absolute_href}")  # Optional debug
 
         # --- Refactored Image Handling (Uniform) ---
-        image_placeholders = {}
+        # image_placeholders = {} # No longer needed
         for img_tag in soup.find_all('img'):
             original_src = img_tag.get('src')
             if not original_src:
@@ -384,19 +358,20 @@ def process_single_url(
             markdown_image_tag = f"![{alt_text}]({absolute_src})"
             logging.debug(f"Generated Markdown for image: {markdown_image_tag}")
 
-            # Use a simple placeholder based on the absolute source URL
-            # Ensures uniqueness if the same image appears multiple times
-            placeholder = f"__IMAGE_PLACEHOLDER_{absolute_src}__"
-
-            # Store the final markdown representation
-            image_placeholders[placeholder] = markdown_image_tag
-
-            # Replace the img tag in the soup with the placeholder text
-            # This needs to happen *before* markdownify runs
-            img_tag.replace_with(placeholder)
+            # Replace the img tag in the soup *directly* with the final markdown tag
+            # This avoids placeholder replacement issues after markdownify
+            img_tag.replace_with(markdown_image_tag)
             logging.debug(
-                f"Replaced img tag {original_src} with placeholder {placeholder}"
+                f"Replaced img tag {original_src} with Markdown: {markdown_image_tag}"
                 )
+
+        # --- Remove any remaining img tags (e.g., those without src) BEFORE markdownify ---
+        # Note: The previous loop already skipped tags without src, but decompose handles any stragglers
+        # or tags that might be generated differently.
+        for img_tag in soup.find_all('img'):
+            # Correct indentation
+            logging.warning(f"Removing unexpected remaining img tag: {img_tag}")
+            img_tag.decompose() # Remove the tag from the soup
 
         # --- Convert HTML Body to Markdown ---
         # Using markdownify to preserve structure (headings, lists,
@@ -422,29 +397,16 @@ def process_single_url(
                     f"Successfully converted HTML body to Markdown for {url}"
                     )
             except Exception as md_err:
-                logging.error(
-                    f"Markdownify conversion failed for {url}: {md_err}",
-                    exc_info=True,
-                    extra={'url': url, 'error_code': 7001}
-                )
+                # Simplified logging
+                logging.error(f"Markdownify conversion failed for {url}: {md_err} [EC:7001]", exc_info=True)
                 # Indicate failure in output
                 markdown_content = "[Markdown conversion failed]"
         else:
-            logging.error(
-                f"No HTML content found to convert for {url}",
-                extra={'url': url, 'error_code': 7002}
-            )
+            # Simplified logging
+            logging.error(f"No HTML content found to convert for {url} [EC:7002]")
 
-        # --- Post-processing: Replace Image Placeholders ---
+        # --- Post-processing: No longer needed as replacement happens before markdownify ---
         processed_content = markdown_content
-        for placeholder, markdown_image_tag in image_placeholders.items():
-            processed_content = processed_content.replace(
-                placeholder,
-                markdown_image_tag
-                )
-            logging.debug(
-                f"Replaced placeholder {placeholder} with Markdown image tag."
-                )
 
         # --- Prepare Final Output ---
         processed_content += f"\n\n---\n*Source URL: {url}*"
@@ -453,36 +415,52 @@ def process_single_url(
         filename = generate_safe_filename(url)
         filepath = os.path.join(output_dir, filename)
 
-        logging.info(f"Saving processed content to: {filepath}")
-        try:
-            # --- Phase 2: Implement Write Queue (Simplified: Direct write for now) ---
-            # TODO: Implement a proper write queue later if direct writing causes issues.
-            with open(filepath, 'w', encoding='utf-8') as f:
-                f.write(processed_content)
-            logging.info(f"Successfully saved: {filepath}")
-            success = True  # Mark as successful *before* checklist update
-        except IOError as e:
-            logging.error(
-                f"Error writing file {filepath}: {e}",
-                extra={'filepath': filepath, 'error_code': 5002}
-            )
-            success = False  # Indicate failure
+        # Mark success *before* checklist update, indicating content generation success
+        success = True
 
     except Exception as e:
         # Catching generic Exception is broad,
         #  consider more specific ones later
-        logging.error(
-            f"Error processing HTML for {url}: {e}",
-            exc_info=True,
-            extra={'url': url, 'error_code': 9001}
-        )  # General processing error
+        # Simplified logging
+        logging.error(f"Error processing HTML for {url}: {e} [EC:9001]", exc_info=True)
         success = False  # Indicate failure
 
-    # --- Update Checklist (only if processing and saving succeeded) ---
+    # --- Update Checklist (only if content generation succeeded) ---
     if success:
         update_checklist_file(checklist_filepath, url, checklist_lock)
+        # Return filepath and content for the writer queue
+        return filepath, processed_content
+    else:
+        # Return None if processing failed before content generation
+        # Return None if processing failed before content generation
+        return None, None
 
-    return success
+
+# --- Writer Thread Function ---
+
+def writer_thread(write_queue):
+    """Worker thread to write processed content to files."""
+    while True:
+        item = write_queue.get()
+        if item is None:
+            logging.info("Writer thread received sentinel. Exiting.")
+            write_queue.task_done()
+            break  # Sentinel value received, exit loop
+
+        filepath, content = item
+        logging.info(f"Writer thread saving content to: {filepath}")
+        try:
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write(content)
+            logging.info(f"Writer thread successfully saved: {filepath}")
+        except IOError as e:
+            # Simplified logging
+            logging.error(f"Writer thread error writing file {filepath}: {e} [EC:5002]")
+        except Exception as e:
+             # Catch unexpected errors during write
+             logging.error(f"Writer thread unexpected error writing {filepath}: {e} [EC:9002]", exc_info=True)
+        finally:
+            write_queue.task_done() # Signal task completion
 
 
 # --- Worker Function ---
@@ -494,11 +472,12 @@ def worker(
         output_dir,
         checklist_filepath,
         checklist_lock,
-        pbar
-        ):
+        pbar,
+        write_queue # Add write_queue argument
+): # noqa: E111, E114, E117 Align closing parenthesis with def
     """
-    Worker thread function to process URLs from the queue and update progress
-    bar.
+    Worker thread function to process URLs from the queue, pass results to the
+    write queue, and update progress bar.
     """
     while True:  # Keep running until queue is empty
         try:
@@ -507,21 +486,26 @@ def worker(
                 f"Worker {threading.current_thread().name} processing {url}"
                 )
             try:
-                process_single_url(
+                # Process the URL to get filepath and content
+                filepath, content = process_single_url(
                     url,
                     base_name,  # Pass base_name
                     output_dir,
                     checklist_filepath,
                     checklist_lock
-                    )
+                    ) # Align closing parenthesis with first argument
+                # If processing was successful, put the result in the write queue
+                if filepath and content:
+                    write_queue.put((filepath, content))
+                    logging.debug(f"Worker {threading.current_thread().name} added {filepath} to write queue.")
+                # If process_single_url returned (None, None), it means processing failed
+                # and was already logged within that function. Checklist wasn't updated.
+
             except Exception as process_err:
-                # Log errors during processing within the worker to avoid
+                # Log errors during processing within the worker itself (e.g., issues calling process_single_url)
                 #  losing them
-                logging.error(
-                    f"Error in process_single_url for {url} within worker {threading.current_thread().name}: {process_err}",
-                    exc_info=True,
-                    extra={'url': url, 'error_code': 9001}
-                )
+                # Simplified logging
+                logging.error(f"Error in process_single_url for {url} within worker {threading.current_thread().name}: {process_err} [EC:9001]", exc_info=True)
             finally:
                 # Ensure task_done is called regardless of success/failure in
                 #  process_single_url
@@ -562,34 +546,26 @@ def main():
     markdown_content = fetch_url_content(args.tree_url)
     if not markdown_content:
         # fetch_url_content already logged the error with code
-        logging.critical(
-            "Failed to fetch markdown tree content. Exiting.",
-            extra={'url': args.tree_url, 'error_code': 6001}
-        )
+        # Simplified logging
+        logging.critical(f"Failed to fetch markdown tree content from {args.tree_url}. Exiting. [EC:6001]")
         sys.exit(1)
 
     # 2. Extract URLs from the tree
     target_urls = extract_urls_from_tree(markdown_content)
     if not target_urls:
-        logging.critical(
-            "No URLs extracted from the markdown tree. Exiting.",
-            extra={'error_code': 6003}
-        )
+        # Simplified logging
+        logging.critical("No URLs extracted from the markdown tree. Exiting. [EC:6003]")
         sys.exit(1)
 
     # 3. Validate extracted URLs (optional step shown here)
     valid_urls = [url for url in target_urls if validate_url(url)]
     invalid_count = len(target_urls) - len(valid_urls)
     if invalid_count > 0:
-        logging.warning(
-            f"Found {invalid_count} invalid URL formats in the input tree.",
-            extra={'invalid_count': invalid_count}
-        )
+        # Simplified logging
+        logging.warning(f"Found {invalid_count} invalid URL formats in the input tree.")
     if not valid_urls:
-        logging.critical(
-            "No valid URLs found after validation. Exiting.",
-            extra={'error_code': 6003}
-        )
+        # Simplified logging
+        logging.critical("No valid URLs found after validation. Exiting. [EC:6003]")
         sys.exit(1)
 
     # 4. Get Base Name (H1 or Fallback) and Define Output Paths
@@ -604,10 +580,9 @@ def main():
         os.makedirs(output_root_dir, exist_ok=True)
         logging.info(f"Ensured root output directory exists: {output_root_dir}")
     except OSError as e:
-        logging.critical(
-            f"Failed to create root output directory {output_root_dir}: {e}. Exiting.",
-            extra={'directory': output_root_dir, 'error_code': 5002}
-        )
+        # Simplified logging
+        # Simplified logging
+        logging.critical(f"Failed to create root output directory {output_root_dir}: {e}. Exiting. [EC:5002]")
         sys.exit(1)
 
     checklist_filename = f"{base_name}_scrape_checklist.md"
@@ -617,10 +592,8 @@ def main():
     # 5. Generate the checklist file in the new location
     if not generate_checklist_file(base_name, checklist_filepath, valid_urls):  # Pass new args
         # generate_checklist_file logs the specific error
-        logging.critical(
-            f"Failed to generate checklist file at {checklist_filepath}. Exiting.",
-            extra={'filepath': checklist_filepath, 'error_code': 5002}
-        )
+        # Simplified logging
+        logging.critical(f"Failed to generate checklist file at {checklist_filepath}. Exiting. [EC:5002]")
         sys.exit(1)
 
     # 6. Create the specific output directory for markdown files
@@ -629,18 +602,20 @@ def main():
         os.makedirs(output_dir, exist_ok=True)  # Use the new output_dir path
         logging.info(f"Ensured specific output directory exists: {output_dir}")
     except OSError as e:
-        logging.critical(
-            f"Failed to create output directory {output_dir}: {e}. Exiting.",
-            extra={'directory': output_dir, 'error_code': 5002}
-        )
+        # Simplified logging
+        # Simplified logging
+        # Simplified logging
+        # Simplified logging
+        logging.critical(f"Failed to create output directory {output_dir}: {e}. Exiting. [EC:5002]")
         sys.exit(1)
 
     logging.info("Setup complete. Starting concurrent URL processing.")
 
-    # --- Phase 2 & 3: Concurrency Setup & Progress Bar ---
+    # --- Concurrency Setup: URL Queue, Write Queue, Locks, Threads ---
     url_queue = queue.Queue()
+    write_queue = queue.Queue() # Create the write queue
     checklist_lock = threading.Lock()
-    threads = []
+    worker_threads = [] # Rename for clarity
     num_worker_threads = 5  # Configurable number of threads
     total_urls = len(valid_urls)
 
@@ -653,43 +628,50 @@ def main():
 
     logging.info(f"Populated URL queue with {total_urls} URLs.")
 
+    # Start the writer thread
+    writer = threading.Thread(target=writer_thread, args=(write_queue,), name="WriterThread", daemon=True)
+    writer.start()
+    logging.info("Started writer thread.")
+
     # Start worker threads
     for i in range(num_worker_threads):
         thread = threading.Thread(
             target=worker,
-                # Pass the progress bar instance to the worker
             args=(
                 url_queue,
-                base_name,  # Pass base_name
-                output_dir,  # Pass new output_dir
-                checklist_filepath,  # Pass new checklist_filepath
+                base_name,
+                output_dir,
+                checklist_filepath,
                 checklist_lock,
-                pbar
-            ),  # Corrected indentation for E129 again
+                pbar,
+                write_queue # Pass write_queue to workers
+            ),
             name=f"Worker-{i+1}",
-            # Allows main thread to exit even if workers are blocked
             daemon=True
         )
-        threads.append(thread)
+        worker_threads.append(thread)
         thread.start()
         logging.debug(f"Started thread: {thread.name}")
 
-    # Wait for all tasks in the queue to be processed
-    logging.info("Waiting for all URLs to be processed...")
-    # Blocks until all items are processed (task_done called for each item)
+    # Wait for all URLs to be processed by workers
+    logging.info("Waiting for all URLs to be processed by workers...")
     url_queue.join()
+    logging.info("All URLs processed by workers.")
+
+    # Signal writer thread to exit by sending sentinel
+    logging.info("Signaling writer thread to exit...")
+    write_queue.put(None)
+
+    # Wait for the writer queue to be empty
+    logging.info("Waiting for writer queue to empty...")
+    write_queue.join()
+    logging.info("Writer queue empty.")
+
+    # Wait for the writer thread to finish (optional as it's daemon, but good practice)
+    # writer.join() # Not strictly necessary for daemon thread
 
     # Close the progress bar
     pbar.close()
-    logging.info(
-        "All URLs processed. Concurrency and progress bar phase complete."
-        )
-    # Note: Since threads are daemons, they will exit automatically when the
-    #  main thread finishes.
-    # If non-daemon threads were used, we would need:
-    # for thread in threads:
-    #     thread.join()
-
     logging.info("Scraping process finished.")
 
 
