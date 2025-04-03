@@ -9,7 +9,7 @@
    - Handles malformed markup
    - XPath-like navigation
 
-- lxml (v4.9.3)
+- lxml (v5.2.2) # Updated version
   - Faster parsing backend for BeautifulSoup
   - XPath support for complex queries
 
@@ -33,7 +33,10 @@
    - Basic validation for input URL format (pointing to the markdown tree file).
 
 4. **Content Conversion**
-   - No specific content conversion libraries beyond HTML parsing (BeautifulSoup) and standard Markdown representation.
+   - html2text (v2024.2.26) # Replaced markdownify
+     - Converts HTML to Markdown.
+     - Handles table structures effectively.
+   - Standard Markdown representation for other elements.
 
 ## Infrastructure
 
@@ -57,7 +60,7 @@
     - Input file line parsing errors
     - URL extraction/validation errors
     - Content crawling (network, HTML parsing errors via BeautifulSoup)
-    - SVG image processing (fetching, custom parser errors, Mermaid CLI errors)
+    - HTML to Markdown conversion errors (html2text)
     - File I/O
 
 ## Development Tooling

@@ -15,7 +15,8 @@ import re  # Added for regex URL extraction
 import os  # Added for directory creation
 from urllib.parse import urlparse, urljoin  # Added urljoin back
 from bs4 import BeautifulSoup  # Added BeautifulSoup
-from markdownify import markdownify  # Added markdownify
+# from markdownify import markdownify # Replaced with html2text
+import html2text # Added html2text
 import threading  # Added threading
 import queue  # Added queue
 from datetime import datetime  # Added for milliseconds timestamp
@@ -153,8 +154,10 @@ def fetch_url_content(url):
         response = session.get(url, timeout=10)  # Use the session
         # Raise HTTPError for bad responses (4xx or 5xx)
         response.raise_for_status()
-        logging.info(f"Successfully fetched content from: {url}")
-        return response.text
+        # Explicitly decode using UTF-8, replacing errors
+        content = response.content.decode('utf-8', errors='replace')
+        logging.info(f"Successfully fetched and decoded content from: {url}")
+        return content
     except requests.exceptions.Timeout as e:
         # Simplified logging
         logging.error(f"Timeout fetching {url}: {e} [EC:1001]")
@@ -405,16 +408,18 @@ def process_single_url(
 
         if html_to_convert:
             try:
-                markdown_content = markdownify(
-                    html_to_convert,
-                    heading_style="ATX"
-                    )
+                # Initialize html2text converter
+                h = html2text.HTML2Text()
+                # Configure options if needed (e.g., h.ignore_links = True)
+                # By default, html2text handles tables well.
+                h.body_width = 0 # Prevent line wrapping
+                markdown_content = h.handle(html_to_convert)
                 logging.info(
-                    f"Successfully converted HTML body to Markdown for {url}"
+                    f"Successfully converted HTML body to Markdown using html2text for {url}"
                     )
-            except Exception as md_err:
+            except Exception as h2t_err:
                 # Simplified logging
-                logging.error(f"Markdownify conversion failed for {url}: {md_err} [EC:7001]", exc_info=True)
+                logging.error(f"html2text conversion failed for {url}: {h2t_err} [EC:7001]", exc_info=True)
                 # Indicate failure in output
                 markdown_content = "[Markdown conversion failed]"
         else:
@@ -556,7 +561,7 @@ def main():
     setup_logging()
     args = parse_arguments()
 
-    logging.info(f"Starting scrape process for URL tree: {args.tree_url}")
+    logging.info(f"Starting scrape process for URL tree: {args.tree_url}") # Reverted log message
 
     # 1. Fetch the markdown tree content
     markdown_content = fetch_url_content(args.tree_url)

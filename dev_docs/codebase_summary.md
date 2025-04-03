@@ -63,8 +63,12 @@ flowchart LR
 
   - BeautifulSoup4: HTML parsing
   - Requests: HTTP requests
-  - Python Markdown Parser (e.g., `markdown` library or similar): To parse the input tree structure file.
-  - fcntl: File locking (if applicable on the target OS, for checklist/log files)
+  - html2text: HTML to Markdown conversion (including tables)
+  - lxml: Faster parsing backend for BeautifulSoup
+  - urllib3: Dependency for Requests (retry logic)
+  - python-json-logger: Structured logging
+  - tqdm: Progress bar
+  - Standard Python libraries (`re`, `os`, `urllib.parse`, `threading`, `queue`, `datetime`, `argparse`, `sys`, `logging`)
   - `dev_docs/error_codes.md`: Defines the structured error codes used in logging.
 
 - **Infrastructure**

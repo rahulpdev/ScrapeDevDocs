@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2025-04-03
+
+### Changed
+
+- Replaced `markdownify` library with `html2text` for HTML-to-Markdown conversion to improve handling of complex structures, particularly tables.
+- Updated `lxml` dependency to `5.2.2` for compatibility with Python 3.13.
+- Added `html2text` to `requirements.txt`.
+
+### Fixed
+
+- Corrected HTML table conversion, ensuring tables are preserved in the output Markdown.
+- Resolved encoding issues (e.g., `Â` characters) in scraped content by explicitly decoding fetched content as UTF-8.
+
 ## [0.1.0] - 2025-04-02
 
 ### Added

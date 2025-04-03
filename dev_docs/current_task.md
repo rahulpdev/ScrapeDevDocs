@@ -7,10 +7,10 @@
 - Memory Bank documentation has been updated to reflect this change (`project_brief.md`, `codebase_summary.md`, `tech_stack.md`).
 - Current documentation versions (prior to this update):
   - project_brief.md: v1.5
-  - codebase_summary.md: v1.9
-  - tech_stack.md: v1.14
-  - project_tracker.md: v1.26
-  - current_task.md: v1.15
+  - codebase_summary.md: v1.12
+  - tech_stack.md: v1.16
+  - project_tracker.md: v1.39
+  - current_task.md: v1.17
   - error_codes.md: v1.0
 
 ## Completed Work
@@ -54,80 +54,34 @@
 - - Configured ignored error codes (W29x, W391, E30x, E501, E2xx) as per `.clinerules/06_linting.md`.
 - - Updated `tech_stack.md` (v1.14) and `project_tracker.md` (v1.26).
 
-## Current Focus: Refactor Image Handling
+## Current Focus: Task Completion & Documentation Review
 
-**Previous Phase (SVG Identification, Robustness Basics, Progress Bar) is complete.** The script identifies images, includes basic structured logging, implements retry logic, and displays a progress bar. However, the image handling logic needs refactoring to meet the new requirements.
+**Previous Phase (Implement Table Handling) is complete.** The script now uses `html2text` for conversion, correctly preserving table structures and handling UTF-8 encoding. Dependencies and relevant Memory Bank documents (`tech_stack.md`, `codebase_summary.md`, `project_tracker.md`) have been updated.
 
-The focus is now on removing the SVG-specific code paths and ensuring all images are handled uniformly using standard Markdown links.
+**Current Activity:** Performing a final review of Memory Bank documents as requested before concluding the task.
 
-## Next Steps: Refactoring and Completion
+## Next Steps
 
-### 1. Refactor Image Handling Logic
+- No further implementation steps are planned for this task.
+- Awaiting confirmation that Memory Bank review is complete before final sign-off.
 
-- **Target:** Modify the code (`scrape_docs.py`, specifically likely within `process_single_url` or related functions) to implement the new uniform image handling.
-- **Steps:**
-  - **Remove SVG Logic:** Delete code related to identifying SVGs, fetching SVG content, attempting Mermaid conversion, and any associated dependencies (`Mermaid.js CLI`, `svgpathtools`, `svgwrite`, custom parser logic).
-  - **Consolidate Image Handling:** Ensure the existing logic for handling non-SVG images (extracting `src`, `alt`, converting to absolute URL, creating `![alt](src)` tag) is applied to _all_ `<img>` tags encountered, regardless of the `src` file extension.
-  - **Verify No Download:** Confirm that no image files (SVG or otherwise) are downloaded during processing.
-  - **Dependency Cleanup:** Remove unused SVG-related dependencies from any requirements file (e.g., `requirements.txt`, if one exists) or setup configuration.
-
-### 2. Testing & Quality Assurance
-
-- **Target:** Update and run tests to ensure the refactored image handling works correctly.
-- **Steps:**
-  - **Review Existing Tests:** Examine existing tests (if any) related to image handling and update them to reflect the new requirements. Remove tests specific to SVG conversion.
-  - **Add New Tests:** Create specific unit/integration tests to verify:
-    - Both SVG and non-SVG image links are processed identically.
-    - `src` and `alt` attributes are correctly extracted.
-    - Relative `src` URLs are converted to absolute URLs.
-    - The output Markdown is `![alt text](absolute URL)`.
-    - No image files are downloaded.
-  - **Code Quality Tools:** Run Black, Flake8 (using `.flake8` config), and Mypy. Address reported issues.
-
-### 3. Final Refinements
-
-- **Target:** Address remaining TODOs and enhance overall quality.
-- **Steps:**
-  - **Write Queue:** Implement the proper write queue with a dedicated writer thread to ensure atomic file writes, replacing the current direct write in `process_single_url`.
-  - **Logging Enhancement:** Review and enhance structured logging. Remove any SVG-specific context logging. Ensure all error paths log appropriate codes from `error_codes.md`.
-  - **"Last Updated" Data:** Revisit the possibility of extracting "Last Updated" data if feasible patterns are identified.
-  - **Concurrency Testing:** Design and perform tests specifically targeting potential race conditions or deadlocks in the concurrent processing and checklist updates.
-  - **CLI Arguments:** Add any remaining necessary command-line arguments (e.g., `--output-dir`, `--log-level`, `--num-workers`).
-  - **README/CHANGELOG:** Update `README.md` and `CHANGELOG.md` to reflect the removal of SVG conversion and the final state of image handling.
-  - **.gitignore/.clineignore:** Ensure these files are up-to-date.
-
-### Previous Refactoring (Completed)
-
-1.  **Code Changes:** Modified `scrape_docs.py` to:
-    - Create a root `output_docs/` directory.
-    - Determine a base name from the first URL's H1 tag (or fallback to domain).
-    - Create checklist files (`<base_name>_scrape_checklist.md`) within `output_docs/`.
-    - Create documentation folders (`<base_name>_docs/`) within `output_docs/`.
-    - Save generated markdown files into the corresponding `<base_name>_docs/` folder.
-2.  **Documentation Updates:**
-    - Updated `project_brief.md` (v1.5) with new output structure and `.gitignore` rule.
-    - Updated `codebase_summary.md` (v1.9) with new output structure and data flow diagram.
-    - Updated `.gitignore` to ignore `output_docs/`.
-    - Updated `project_tracker.md` (v1.26) to mark refactoring complete and update versions.
-    - Updated this `current_task.md` file (v1.15).
-
-## Memory Bank Validation Checklist (Pre-Task)
+## Memory Bank Validation Checklist (Completed for Table Handling Task)
 
 - **project_brief.md (v1.6):**
-  - [x] Verify requirements still match task (Uniform image handling `![alt](url)`, no download).
+  - [x] Verify requirements still match task (Table preservation preference).
   - [x] Check for conflicting updates (None found).
-  - [x] Confirm implementation constraints (Markdown output, CLI input).
-- **codebase_summary.md (v1.10):**
-  - [x] Verify requirements still match task (Image processing section updated, dependencies reflect removal).
+  - [x] Confirm implementation constraints (Markdown output).
+- **codebase_summary.md (v1.11 -> v1.12):**
+  - [x] Verify requirements still match task (Content Extractor component responsible for conversion).
   - [x] Check for conflicting updates (None found).
-  - [x] Confirm implementation constraints (Concurrency model, data flow).
-- **tech_stack.md (v1.15):**
-  - [x] Verify requirements still match task (SVG tech removed, image handling approach updated).
+  - [x] Confirm implementation constraints (Uses BeautifulSoup, `html2text` now).
+- **tech_stack.md (v1.15 -> v1.16):**
+  - [x] Verify requirements still match task (Identifies `html2text` as current conversion tool).
   - [x] Check for conflicting updates (None found).
   - [x] Confirm implementation constraints (Python version, core libs).
 
-## Documentation Finalization (Post Refactoring)
+## Documentation Finalization (Completed for Table Handling)
 
-1.  Update `project_tracker.md` to mark completed refactoring tasks.
-2.  Increment version numbers for all modified Memory Bank documents.
-3.  Update this `current_task.md` file (v1.16+) to reflect project completion or any remaining minor tasks.
+1.  `project_tracker.md` updated to mark completed table handling tasks (v1.39).
+2.  Version numbers incremented for modified Memory Bank documents (`codebase_summary.md` v1.12, `tech_stack.md` v1.16, `project_tracker.md` v1.39).
+3.  This `current_task.md` file updated (v1.18).

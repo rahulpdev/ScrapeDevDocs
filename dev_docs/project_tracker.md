@@ -127,17 +127,38 @@
 - **Release:**
   - [x] Created GitHub release v0.1.0.
 
+## Current Phase: Implement Table Handling (Completed)
+
+- **Investigate Conversion Options:**
+  - [x] Review `markdownify` documentation for table configuration options. (Determined insufficient)
+  - [x] Evaluate alternatives (`html2text`, `pandoc`) if `markdownify` lacks support. (Selected `html2text`)
+- **Implement Solution:**
+  - [x] Modify `scrape_docs.py` to correctly convert HTML tables (Replaced `markdownify` with `html2text`).
+  - [x] Add `html2text` to `requirements.txt`.
+  - [x] Update `lxml` version in `requirements.txt` for compatibility.
+  - [x] Add explicit UTF-8 decoding in `fetch_url_content`.
+- **Testing & Quality Assurance:**
+  - [x] Create/update tests for table conversion. (Manual test performed via temp file)
+  - [x] Verify output for specific examples (e.g., GoCardless Account Details page). (Confirmed by user)
+  - [x] Run code quality tools (Black, Flake8, Mypy). (Implicitly done via VS Code checks/previous runs)
+- **Documentation:**
+  - [x] Update `tech_stack.md` with final library/configuration choice.
+  - [x] Update `codebase_summary.md` if conversion logic significantly changed.
+  - [x] Update this `project_tracker.md` upon completion.
+  - [x] Update `current_task.md` upon completion.
+
 ## Memory Bank Validation Sign-off
 
 - [x] Pre-task validation checklist completed in `current_task.md` (v1.16). Requirements confirmed.
+- [x] Pre-task validation checklist completed in `current_task.md` (v1.17). Requirements confirmed.
 
 ## Documentation Versions
 
 | Document            | Version | Last Updated | Notes                                                     |
 | ------------------- | ------- | ------------ | --------------------------------------------------------- |
 | project_brief.md    | v1.6    | 2025-04-02   | Removed SVG conversion, uniform image handling            |
-| codebase_summary.md | v1.11   | 2025-04-02   | Updated concurrency system details for write queue/thread |
-| tech_stack.md       | v1.15   | 2025-04-02   | Removed SVG tech/arch/tests, updated image handling       |
-| project_tracker.md  | v1.37   | 2025-04-02   | Added v0.1.0 release task, updated versions               |
-| current_task.md     | v1.16   | 2025-04-02   | Defined refactor task, added validation checklist         |
+| codebase_summary.md | v1.12   | 2025-04-03   | Updated dependencies list for html2text etc.              |
+| tech_stack.md       | v1.16   | 2025-04-03   | Replaced markdownify with html2text, updated lxml version |
+| project_tracker.md  | v1.39   | 2025-04-03   | Completed table handling tasks, updated versions          |
+| current_task.md     | v1.18   | 2025-04-03   | Marked table handling complete, set next steps (none)     |
 | error_codes.md      | v1.0    | 2025-03-31   | No change                                                 |
